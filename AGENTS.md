@@ -68,6 +68,16 @@ are generated from `app.json` and the installed native dependencies:
   built binary from disk (`node_modules/.expo-build-disk-cache`) when the native
   fingerprint is unchanged, skipping a full native rebuild. It's disk-only for
   now; a remote provider can be added later via the provider's `remotePlugin`.
+- **Build performance (config-only):**
+  - Android Gradle tuning lives in the local plugin
+    `plugins/withAndroidBuildPerformance.js` (JVM heap/metaspace, parallel,
+    build cache, configuration cache, and disabling release `lintVital`). If a
+    build fails with a configuration-cache error, drop the
+    `org.gradle.configuration-cache` line there.
+  - For a fast local Android compile, export `RN_DEV_SINGLE_ABI=arm64-v8a`
+    (device) or `x86_64` (emulator) — env-gated so release/CI keep all ABIs.
+  - iOS uses prebuilt React Native via `expo-build-properties`
+    (`ios.buildReactNativeFromSource: false` → `RCT_USE_PREBUILT_RNCORE=1`).
 
 ## Code Rules & Patterns
 

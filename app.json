@@ -48,10 +48,12 @@
             "reactNativeReleaseLevel": "experimental"
           },
           "ios": {
-            "reactNativeReleaseLevel": "experimental"
+            "reactNativeReleaseLevel": "experimental",
+            "buildReactNativeFromSource": false
           }
         }
       ],
+      "./plugins/withAndroidBuildPerformance.js",
       [
         "expo-font",
         {
