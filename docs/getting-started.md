@@ -76,6 +76,15 @@ yarn android    # prebuild + run on Android
 yarn start
 ```
 
+### Faster local builds (disk cache)
+
+`app.json` configures a `buildCacheProvider` (`expo-build-disk-cache`), so
+`yarn ios` / `yarn android` reuse a previously built binary from
+`node_modules/.expo-build-disk-cache` when the native fingerprint hasn't
+changed — skipping a full native rebuild. The cache lives on disk only for now
+(a remote provider can be plugged in later via the provider's `remotePlugin`
+option).
+
 ## Common commands
 
 ```sh
