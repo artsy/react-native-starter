@@ -24,7 +24,10 @@
     "setup:artsy": "./scripts/setup-env-for-artsy",
     "prettier-project": "yarn prettier --write 'src/**/*.{ts,tsx}'",
     "prettier-write": "prettier --write --ignore-unknown",
-    "sync-schema": "curl https://raw.githubusercontent.com/artsy/metaphysics/main/_schemaV2.graphql -o data/schema.graphql; yarn prettier --write --parser graphql data/schema.graphql"
+    "sync-schema": "curl https://raw.githubusercontent.com/artsy/metaphysics/main/_schemaV2.graphql -o data/schema.graphql; yarn prettier --write --parser graphql data/schema.graphql",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "@artsy/icons": "3.74.0",
@@ -127,7 +130,8 @@
     "react-test-renderer": "19.2.0",
     "relay-compiler": "^20.1.0",
     "relay-test-utils": "18.2.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitepress": "^1.6.3"
   },
   "resolutions": {
     "tslib": ">=2.6.1"
