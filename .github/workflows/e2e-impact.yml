@@ -1,0 +1,129 @@
+name: 🐽 E2E impact (Sniffler)
+
+# Pure JS/TS dependency-graph analysis of the PR diff (no emulator, no app
+# build) using Sniffler (https://github.com/callstackincubator/sniffler).
+# It reports which agent-device e2e flows a change can actually affect so we can
+# skip the (expensive, manual) device e2e suite when nothing is impacted, and
+# otherwise run only the selected flows.
+#
+# This job is informational and MUST NOT block a PR: if Sniffler errors or
+# cannot resolve the graph, it FAILS OPEN (reports "run the full suite") and
+# still exits 0. Do not mark it as a required check.
+#
+# NOTE: the exact Sniffler CLI/flags (`impact --base --head --format json`) and
+# the `.sniffler/` config schema are based on Sniffler 0.4.0's documented
+# interface and were validated locally against this repo. Re-confirm on the
+# first real CI run.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: e2e-impact-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  impact:
+    name: Sniffler impact analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+    outputs:
+      # impacted=true means "run e2e" (either the selected flows, or — on
+      # fallback — the full suite). impacted=false means "safe to skip e2e".
+      impacted: ${{ steps.sniff.outputs.impacted }}
+      # Space-separated list of impacted `.ad` flow files (empty when skipping
+      # or when failing open to the full suite).
+      flows: ${{ steps.sniff.outputs.flows }}
+      # fallback=true means Sniffler could not analyze the diff and we defaulted
+      # to running everything.
+      fallback: ${{ steps.sniff.outputs.fallback }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so `git diff <base>..HEAD` works.
+          fetch-depth: 0
+
+      - name: Fetch base ref
+        run: git fetch --no-tags origin "${{ github.event.pull_request.base.ref }}" || true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Sniffler impact analysis
+        id: sniff
+        env:
+          BASE_REF: origin/${{ github.event.pull_request.base.ref }}
+        run: |
+          set +e
+          yarn sniffler impact --base "$BASE_REF" --head HEAD --format json > sniffler.json 2> sniffler.err
+          STATUS=$?
+          set -e
+
+          # ---- Fail open: any Sniffler error => run the full suite, never block ----
+          if [ "$STATUS" -ne 0 ]; then
+            {
+              echo "### 🐽 Sniffler e2e impact"
+              echo ""
+              echo "⚠️ Sniffler could not analyze this diff (exit code $STATUS)."
+              echo "**Failing open — the full agent-device e2e suite should run.** Sniffler never blocks a PR."
+              echo ""
+              echo '```'
+              cat sniffler.err 2>/dev/null || true
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "impacted=true" >> "$GITHUB_OUTPUT"
+            echo "fallback=true" >> "$GITHUB_OUTPUT"
+            echo "flows=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # ---- Parse the impacted flow list (fail open on parse errors) ----
+          FLOWS=$(node -e 'const fs=require("fs");let d;try{d=JSON.parse(fs.readFileSync("sniffler.json","utf8"))}catch(e){process.exit(3)}process.stdout.write((d.recommendedTests||[]).map(t=>t.test).join(" "))')
+          if [ $? -ne 0 ]; then
+            {
+              echo "### 🐽 Sniffler e2e impact"
+              echo ""
+              echo "⚠️ Could not parse Sniffler output — **failing open (run full suite)**."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "impacted=true" >> "$GITHUB_OUTPUT"
+            echo "fallback=true" >> "$GITHUB_OUTPUT"
+            echo "flows=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # ---- Report the decision ----
+          if [ -z "$FLOWS" ]; then
+            {
+              echo "### 🐽 Sniffler e2e impact"
+              echo ""
+              echo "✅ **No e2e impact — safe to skip the agent-device e2e suite.**"
+              echo ""
+              echo "This change does not reach any flow declared in \`.sniffler/test-map.json\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "impacted=false" >> "$GITHUB_OUTPUT"
+            echo "fallback=false" >> "$GITHUB_OUTPUT"
+            echo "flows=" >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "### 🐽 Sniffler e2e impact"
+              echo ""
+              echo "🎯 **Impacted e2e flows** — run only these:"
+              echo ""
+              for f in $FLOWS; do echo "- \`$f\`"; done
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "impacted=true" >> "$GITHUB_OUTPUT"
+            echo "fallback=false" >> "$GITHUB_OUTPUT"
+            echo "flows=$FLOWS" >> "$GITHUB_OUTPUT"
+          fi

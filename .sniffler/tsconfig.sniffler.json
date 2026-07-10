@@ -1,0 +1,9 @@
+{
+  "//": "Sniffler-only tsconfig. Sniffler reads baseUrl + paths directly from this file (it does NOT follow `extends`), so we mirror the project's absolute-import setup (tsconfig.json baseUrl: \"src\" / babel module-resolver root: \"./src\") with an explicit wildcard mapping. baseUrl is the repo root (\"..\" relative to .sniffler/) so resolved paths match Sniffler's repo-root-relative graph node keys, and \"*\": [\"src/*\"] maps bare `src/`-relative specifiers like `Scenes/Login/Login`, `store/GlobalStore`, `system/...` onto files under src/. Keep in sync with tsconfig.json's baseUrl if it ever changes.",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "*": ["src/*"]
+    }
+  }
+}
