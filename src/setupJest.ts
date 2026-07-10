@@ -22,3 +22,13 @@ jest.mock("react-native-device-info", () => ({
   getBuildNumber: () => "1",
   getUserAgentSync: () => "Artsy-Mobile/test",
 }))
+
+// Native-backed component: render as a plain host view in tests.
+jest.mock("react-native-linear-gradient", () => "LinearGradient")
+
+// Native module: no-op haptics in tests.
+jest.mock("react-native-haptic-feedback", () => ({
+  __esModule: true,
+  default: { trigger: jest.fn() },
+  trigger: jest.fn(),
+}))
