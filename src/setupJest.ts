@@ -10,6 +10,12 @@ jest.mock("react-native-reanimated", () =>
   require("react-native-reanimated/mock")
 )
 
+// reanimated's mock initializes worklets, whose native part is unavailable in
+// jest — mock worklets too so palette-mobile/moti components can render.
+jest.mock("react-native-worklets", () =>
+  require("react-native-worklets/src/mock")
+)
+
 jest.mock("react-native-config", () => ({
   __esModule: true,
   default: {
