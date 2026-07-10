@@ -7,6 +7,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useStoreRehydrated } from "easy-peasy"
 import { HomeScreen } from "Scenes/Home/Home"
+import { ExampleListScreen } from "Scenes/List/ExampleList"
 import { LoginScreen } from "Scenes/Login/Login"
 import { SettingsScreen } from "Scenes/Settings/Settings"
 import { GlobalStore } from "store/GlobalStore"
@@ -29,6 +30,13 @@ const HomeTabs = createBottomTabNavigator({
       screen: HomeScreen,
       options: {
         title: "Home",
+        tabBarIcon: ({ color }) => <TabDot color={color} />,
+      },
+    },
+    List: {
+      screen: ExampleListScreen,
+      options: {
+        title: "List",
         tabBarIcon: ({ color }) => <TabDot color={color} />,
       },
     },
