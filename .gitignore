@@ -68,8 +68,10 @@ assets/fonts/*
 **/.env*
 !.env.example
 
-# Relay
+# Relay — ignore generated artifacts but keep the directory so the
+# relay-compiler `artifactDirectory` exists on a fresh checkout.
 src/__generated__/*
+!src/__generated__/.gitkeep
 
 # Metro health check
 .metro-health-check*
