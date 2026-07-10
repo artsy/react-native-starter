@@ -95,22 +95,28 @@ Feature flags are served by [Unleash](https://www.getunleash.io/) through
 `@unleash/proxy-client-react`, configured in
 `src/system/providers/FeatureFlagProvider.tsx`.
 
-When `EXPO_PUBLIC_UNLEASH_URL` or `EXPO_PUBLIC_UNLEASH_CLIENT_KEY` is missing,
-the provider is a no-op passthrough, so the starter runs without feature-flag
-credentials. Once configured, it wraps the app in Unleash's `FlagProvider`
-(flags are cached in `AsyncStorage`, user context comes from the store's
-`auth.userID`, and refresh is manual — `refreshInterval: 0`).
+`FeatureFlagProvider` always mounts a Flag context (flags are cached in
+`AsyncStorage`; context carries `userId`, an anonymous `sessionId`, and
+`appVersion`/`buildNumber`). When `EXPO_PUBLIC_UNLEASH_URL` or
+`EXPO_PUBLIC_UNLEASH_CLIENT_KEY` is missing, the client is started in a
+no-network mode (`startClient={false}`, empty bootstrap) so every flag resolves
+to `false` without throwing — the starter runs without feature-flag credentials.
 
-Read a flag with the `useFlag` hook:
+Do **not** read `useFlag` directly. Read flags through the safe wrapper, which
+adds a compiled-in `readyForRelease` gate and local dev overrides:
 
 ```tsx
-import { useFlag } from "@unleash/proxy-client-react"
+import { useFeatureFlag } from "system/featureFlags/useFeatureFlag"
 
 const MyComponent = () => {
-  const isEnabled = useFlag("my-feature-flag")
+  const isEnabled = useFeatureFlag("exampleNewFeature")
   return isEnabled ? <NewUI /> : <OldUI />
 }
 ```
+
+See [Feature Flags](/feature-flags) for the full model (the `readyForRelease`
+build-time gate, adding a flag, the Dev Menu, and the `appVersion` SEMVER
+constraint used to gate a flag server-side).
 
 ## GraphQL environments
 

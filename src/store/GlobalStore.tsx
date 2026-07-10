@@ -9,7 +9,10 @@ import { FC, PropsWithChildren } from "react"
 import { Platform } from "react-native"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
-const STORE_VERSION = 0
+// Bump on every change to a store Model's shape. v1 added the `devMenu` slice
+// (feature-flag overrides + anonymous stickiness id). This repo has no migration
+// runner yet, so a version bump resets persisted state to the new default shape.
+const STORE_VERSION = 1
 
 if (Platform.OS === "ios") {
   // @ts-ignore
