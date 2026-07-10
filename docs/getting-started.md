@@ -1,9 +1,9 @@
 # Getting Started
 
 `react-native-starter` is an **Expo-managed** project using the **prebuild
-(CNG)** workflow. The native `ios/` and `android/` folders are **not** committed
-— they are generated on demand from `app.json` and the installed native
-dependencies.
+(CNG)** workflow. It targets **Expo SDK 56** (React Native 0.85, React 19.2).
+The native `ios/` and `android/` folders are **not** committed — they are
+generated on demand from `app.json` and the installed native dependencies.
 
 ## Prerequisites
 
