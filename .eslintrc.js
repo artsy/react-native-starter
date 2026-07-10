@@ -8,6 +8,8 @@ module.exports = {
     "jest",
     "no-relative-import-paths",
     "react-hooks",
+    "react-native-a11y",
+    "simple-import-sort",
     "testing-library",
   ],
   extends: [
@@ -46,22 +48,32 @@ module.exports = {
         caughtErrorsIgnorePattern: "^_",
       },
     ],
-    "import/order": [
+    // Import ordering is handled by `simple-import-sort` (auto-fixable),
+    // so the `import/order` rule is disabled below to avoid the two fighting.
+    "simple-import-sort/imports": [
       ERR,
       {
-        alphabetize: { order: "asc" },
         groups: [
-          "builtin",
-          "external",
-          "internal",
-          "index",
-          "sibling",
-          "parent",
-          "object",
-          "type",
+          // Side-effect imports (e.g. `import "./setup"`).
+          ["^\\u0000"],
+          // Node.js builtins.
+          ["^node:"],
+          // External packages (npm modules, including scoped `@artsy/...`).
+          ["^@?\\w"],
+          // Absolute imports from `src/` (module-resolver root). These start
+          // with a letter too, but win via longest-match over the packages
+          // group above.
+          [
+            "^(App|Navigation|Scenes|assets|helpers|relay|store|system|utils|__generated__|setupJest)(/.*|$)",
+          ],
+          // Any other absolute imports not matched above.
+          ["^"],
+          // Relative imports (same folder / parent).
+          ["^\\."],
         ],
       },
     ],
+    "simple-import-sort/exports": ERR,
     "import/no-duplicates": ERR,
     "react/jsx-curly-brace-presence": ERR,
     "react-hooks/rules-of-hooks": ERR,
@@ -75,9 +87,22 @@ module.exports = {
       { allowSameFolder: true, rootDir: "src" },
     ],
 
+    // Accessibility guidance (react-native-a11y). Kept at "warn" so they guide
+    // authors of new/interactive components without hard-failing CI on the
+    // existing codebase. Add `accessibilityLabel`/`accessibilityRole` (and a
+    // hint where useful) to interactive elements to satisfy these.
+    "react-native-a11y/has-accessibility-hint": "warn",
+    "react-native-a11y/has-accessibility-props": "warn",
+    "react-native-a11y/has-valid-accessibility-role": "warn",
+    "react-native-a11y/has-valid-accessibility-state": "warn",
+    "react-native-a11y/no-nested-touchables": "warn",
+
     /**
      * Disabled
      */
+
+    // Superseded by `simple-import-sort/imports` above.
+    "import/order": OFF,
 
     "@typescript-eslint/ban-ts-comment": OFF,
     "@typescript-eslint/ban-types": OFF,
