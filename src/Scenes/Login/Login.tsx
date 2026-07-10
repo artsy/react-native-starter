@@ -8,7 +8,6 @@ import {
   useColor,
   useSpace,
 } from "@artsy/palette-mobile"
-import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { FormikProvider, useFormik, useFormikContext } from "formik"
 import { useRef } from "react"
 import {
@@ -22,7 +21,6 @@ import {
 import LinearGradient from "react-native-linear-gradient"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
-import { MainNavigationStack } from "MainNavigationStack"
 import { GlobalStore } from "store/GlobalStore"
 
 export interface LoginSchema {
@@ -39,7 +37,6 @@ export const loginSchema = Yup.object().shape({
   ),
 })
 
-type LoginScreenProps = NativeStackScreenProps<MainNavigationStack, "Login">
 
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=net.artsy.app"
@@ -230,7 +227,7 @@ export const LoginScreenContent: React.FC = () => {
 
 const initialValues: LoginSchema = { email: "", password: "" }
 
-export const LoginScreen: React.FC<LoginScreenProps> = () => {
+export const LoginScreen = () => {
   const formik = useFormik<LoginSchema>({
     enableReinitialize: true,
     validateOnChange: false,
