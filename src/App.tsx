@@ -1,4 +1,4 @@
-import { ScreenDimensionsProvider, Theme } from "@artsy/palette-mobile"
+import { ScreenDimensionsProvider } from "@artsy/palette-mobile"
 import { NavigationContainer } from "@react-navigation/native"
 import { ReactNode } from "react"
 import { LogBox } from "react-native"
@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { RelayEnvironmentProvider } from "react-relay"
 import { MainNavigationStack } from "MainNavigationStack"
 import { defaultEnvironment } from "relay/defaultEnvironent"
+import { ThemeProvider } from "system/providers/ThemeProvider"
 import { GlobalStoreProvider } from "store/GlobalStore"
 
 LogBox.ignoreLogs(["Expected style "])
@@ -15,11 +16,11 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
   <RelayEnvironmentProvider environment={defaultEnvironment}>
     <SafeAreaProvider>
       <ScreenDimensionsProvider>
-        <Theme>
+        <ThemeProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <NavigationContainer>{children}</NavigationContainer>
           </GestureHandlerRootView>
-        </Theme>
+        </ThemeProvider>
       </ScreenDimensionsProvider>
     </SafeAreaProvider>
   </RelayEnvironmentProvider>
