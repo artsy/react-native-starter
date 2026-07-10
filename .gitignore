@@ -20,6 +20,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+ios/.xcode.env.local
 
 # Android/IntelliJ
 #
@@ -29,6 +30,9 @@ build/
 local.properties
 *.iml
 *.hprof
+.cxx/
+*.keystore
+!debug.keystore
 
 # node.js
 #
@@ -36,11 +40,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
-*.keystore
-!debug.keystore
+# Caches
+.cache
+.jest/cache
 
 # fastlane
 #
@@ -49,9 +51,9 @@ buck-out/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/
 
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
 
 # Bundle artifact
 *.jsbundle
@@ -59,10 +61,36 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-# Fonts
-android/app/src/main/assets/fonts/*
-ios/Assets/Fonts/*
+# Fonts (downloaded via `yarn setup:artsy`)
+assets/fonts/*
 
 # Ignore env files
 **/.env*
 !.env.example
+
+# Relay
+src/__generated__/*
+
+# Metro health check
+.metro-health-check*
+
+# for tsconfig `incremental`
+tsconfig.tsbuildinfo
+
+# testing
+/coverage
+
+# Expo + prebuild (native projects are generated, not committed)
+.expo
+dist/
+web-build/
+/android
+/ios
+
+# yarn 4
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions

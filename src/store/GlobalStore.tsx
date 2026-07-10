@@ -1,8 +1,13 @@
-import React from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { StoreProvider, createStore, createTypedHooks, persist } from "easy-peasy"
-import { GlobalStoreModel } from "./Models/GlobalStoreModel"
+import {
+  StoreProvider,
+  createStore,
+  createTypedHooks,
+  persist,
+} from "easy-peasy"
+import { FC, PropsWithChildren } from "react"
 import { Platform } from "react-native"
+import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
 const STORE_VERSION = 0
 
@@ -52,7 +57,7 @@ function createGlobalStore() {
   return store
 }
 
-let globalStoreInstance = createGlobalStore()
+const globalStoreInstance = createGlobalStore()
 
 const hooks = createTypedHooks<GlobalStoreModel>()
 
@@ -63,7 +68,7 @@ export const GlobalStore = {
   },
 }
 
-export const GlobalStoreProvider: React.FC<{}> = ({ children }) => {
+export const GlobalStoreProvider: FC<PropsWithChildren> = ({ children }) => {
   return <StoreProvider store={globalStoreInstance}>{children}</StoreProvider>
 }
 

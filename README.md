@@ -10,11 +10,25 @@ Want to know more about Eigen: our Artsy Mobile? Check it out [here](https://git
 
 ### Getting Started
 
-**For Artsy Engineers**
-Get set up by running
+This project uses **Expo** with the **prebuild** (CNG) workflow. The native
+`ios/` and `android/` folders are **not** committed — they are generated on
+demand from `app.json` and the installed native dependencies.
 
-```
-scripts/setup-env-for-artsy
+**For Artsy Engineers**
+
+```sh
+# 1. Install the pinned toolchain (node, ruby, java, yarn)
+mise install # or `asdf install`
+
+# 2. Download fonts + environment variables and install dependencies
+yarn setup:artsy
+yarn install
+
+# 3. Generate the native projects
+yarn prebuild
+
+# 4. Run the app
+yarn ios        # or: yarn android
 ```
 
 **For OSS Contributors**
@@ -22,14 +36,28 @@ Instructions coming later
 
 ## Features
 
-- Typescript support 💜
-- Artsy design system **Palette** integration
-- React-navigation boilerplate ready to be extended
-- Relay 12 Integrated
-- Store Management and State Persistence
-- VSCode Intellisense and types completion ready and optimised
-- Login screen functional already available
-- Eslint
+- **Expo** managed workflow with **prebuild** — no committed native folders
+- **TypeScript** in strict mode 💜
+- Artsy design system via **[@artsy/palette-mobile](https://github.com/artsy/palette)**
+- **React Navigation** boilerplate ready to be extended
+- **Relay 20** integrated (co-located fragments + Relay compiler)
+- Global store management and state persistence with **easy-peasy**
+- Functional **Login** screen already available
+- ESLint + Prettier, and Jest via **jest-expo** / `@testing-library/react-native`
+
+## Common Commands
+
+```sh
+yarn start          # Metro + Relay compiler
+yarn ios            # Prebuild + run on iOS
+yarn android        # Prebuild + run on Android
+yarn prebuild       # Regenerate native ios/ and android/ folders
+yarn test           # Jest
+yarn type-check     # Relay compile + tsc
+yarn lint           # ESLint (auto-fix)
+yarn relay          # Compile Relay artifacts
+yarn sync-schema    # Refresh data/schema.graphql from metaphysics
+```
 
 ## License
 

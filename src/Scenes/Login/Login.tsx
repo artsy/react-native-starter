@@ -1,13 +1,29 @@
+import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  Spacer,
+  Text,
+  useColor,
+  useSpace,
+} from "@artsy/palette-mobile"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
-import { GlobalStore } from "@store/GlobalStore"
 import { FormikProvider, useFormik, useFormikContext } from "formik"
-import { MainNavigationStack } from "MainNavigationStack"
-import { Box, Button, Flex, Input, Spacer, Text, useColor, useSpace } from "palette"
-import React, { useRef } from "react"
-import { Alert, Image, Linking, Platform, ScrollView, TouchableOpacity } from "react-native"
+import { useRef } from "react"
+import {
+  Alert,
+  Image,
+  Linking,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native"
 import LinearGradient from "react-native-linear-gradient"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
+import { MainNavigationStack } from "MainNavigationStack"
+import { GlobalStore } from "store/GlobalStore"
 
 export interface LoginSchema {
   email: string
@@ -16,23 +32,38 @@ export interface LoginSchema {
 
 export const loginSchema = Yup.object().shape({
   email: Yup.string().email("Please provide a valid email address"),
-  password: Yup.string().test("password", "Password field is required", (value) => value !== ""),
+  password: Yup.string().test(
+    "password",
+    "Password field is required",
+    (value) => value !== ""
+  ),
 })
 
-interface LoginScreenProps extends NativeStackScreenProps<MainNavigationStack, "Home"> {}
+type LoginScreenProps = NativeStackScreenProps<MainNavigationStack, "Login">
 
-const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=net.artsy.app"
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=net.artsy.app"
 const PLAY_STORE_SCHEME_URL = "artsy://"
-const APP_STORE_URL = "https://apps.apple.com/us/app/artsy-buy-sell-original-art/id703796080"
+const APP_STORE_URL =
+  "https://apps.apple.com/us/app/artsy-buy-sell-original-art/id703796080"
 const APP_SCHEME_URL = "artsy:///"
 
-export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
+export const LoginScreenContent: React.FC = () => {
   const color = useColor()
   const space = useSpace()
   const insets = useSafeAreaInsets()
 
-  const { values, handleSubmit, handleChange, validateForm, errors, isValid, dirty, isSubmitting, setErrors } =
-    useFormikContext<LoginSchema>()
+  const {
+    values,
+    handleSubmit,
+    handleChange,
+    validateForm,
+    errors,
+    isValid,
+    dirty,
+    isSubmitting,
+    setErrors,
+  } = useFormikContext<LoginSchema>()
 
   const passwordInputRef = useRef<Input>(null)
   const emailInputRef = useRef<Input>(null)
@@ -40,7 +71,8 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
   // TODO: Test this on Android
   const handleOpenArtsyMobile = async () => {
     const storeURL = Platform.OS === "android" ? PLAY_STORE_URL : APP_STORE_URL
-    const appSchemeURL = Platform.OS === "android" ? PLAY_STORE_SCHEME_URL : APP_SCHEME_URL
+    const appSchemeURL =
+      Platform.OS === "android" ? PLAY_STORE_SCHEME_URL : APP_SCHEME_URL
 
     try {
       const supported = await Linking.canOpenURL(appSchemeURL)
@@ -63,26 +95,29 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
       style={{ flex: 1, flexGrow: 1 }}
     >
       <ScrollView
-        contentContainerStyle={{ paddingTop: insets.top, paddingHorizontal: space(2) }}
+        contentContainerStyle={{
+          paddingTop: insets.top,
+          paddingHorizontal: space(2),
+        }}
         keyboardShouldPersistTaps="always"
         bounces={false}
       >
-        <Text variant="xl" color="white" fontWeight="bold">
+        <Text variant="xl" color="white100" weight="medium">
           Folio
         </Text>
-        <Spacer mt={60} />
-        <Text variant="lg" color="white">
+        <Spacer y={6} />
+        <Text variant="lg-display" color="white100">
           Log In
         </Text>
-        <Text variant="md" mt={0.5} color="white">
+        <Text variant="sm" color="white100">
           With Your Artsy Partner Account
         </Text>
-        <Spacer mt={50} />
+        <Spacer y={4} />
         <Box>
           <Input
             ref={emailInputRef}
             autoCapitalize="none"
-            autoCompleteType="email"
+            autoComplete="email"
             keyboardType="email-address"
             onChangeText={(text) => {
               handleChange("email")(text.trim())
@@ -96,7 +131,6 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
             placeholder="Email address"
             placeholderTextColor={color("black30")}
             title="Email"
-            titleStyle={{ color: "white" }}
             value={values.email}
             returnKeyType="next"
             spellCheck={false}
@@ -106,10 +140,10 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
             textContentType="username"
             error={errors.email}
           />
-          <Spacer mt={2} />
+          <Spacer y={2} />
           <Input
             autoCapitalize="none"
-            autoCompleteType="password"
+            autoComplete="password"
             autoCorrect={false}
             onChangeText={(text) => {
               // Hide error when the user starts to type again
@@ -121,14 +155,13 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
               }
               handleChange("password")(text)
             }}
-            onSubmitEditing={handleSubmit}
+            onSubmitEditing={() => handleSubmit()}
             onBlur={() => validateForm()}
             placeholder="Password"
             placeholderTextColor={color("black30")}
             ref={passwordInputRef}
             secureTextEntry
             title="Password"
-            titleStyle={{ color: "white" }}
             returnKeyType="done"
             // We need to to set textContentType to password here
             // enable autofill of login details from the device keychain.
@@ -138,26 +171,31 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
           />
         </Box>
 
-        <Spacer mt={1} />
+        <Spacer y={1} />
 
         <TouchableOpacity
           onPress={() => {
             Alert.alert("Oups, not yet implemented")
           }}
         >
-          {/* eslint-disable-next-line react-native/no-inline-styles */}
-          <Text variant="sm" color="white" style={{ textDecorationLine: "underline" }} textAlign="right">
+          <Text
+            variant="sm"
+            color="white100"
+            style={{ textDecorationLine: "underline" }}
+            textAlign="right"
+          >
             Forgot password?
           </Text>
         </TouchableOpacity>
 
-        <Spacer mt={3} />
+        <Spacer y={4} />
 
         <Button
-          onPress={handleSubmit}
+          onPress={() => handleSubmit()}
           block
           haptic="impactMedium"
-          disabled={!(isValid && dirty) || isSubmitting} // isSubmitting to prevent weird appearances of the errors caused by async submiting
+          // isSubmitting to prevent weird appearances of the errors caused by async submitting
+          disabled={!(isValid && dirty) || isSubmitting}
           loading={isSubmitting}
           testID="loginButton"
           variant="fillDark"
@@ -165,22 +203,22 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
           Log in
         </Button>
 
-        <Spacer mt={2} />
+        <Spacer y={2} />
 
-        <Text variant="xs" color="white" textAlign={"center"}>
-          Once you log in. Artsy Folio will begin downloading your artworks. We recommend using a stable Wifi
-          connection.
+        <Text variant="xs" color="white100" textAlign="center">
+          Once you log in. Artsy Folio will begin downloading your artworks. We
+          recommend using a stable Wifi connection.
         </Text>
       </ScrollView>
-      <Flex px={2} paddingBottom={20}>
+      <Flex px={2} pb={4}>
         <TouchableOpacity onPress={handleOpenArtsyMobile}>
           <Flex flexDirection="row">
             <Image
               resizeMode="contain"
               style={{ height: 50, width: 50 }}
-              source={require("images/short-white-logo.png")}
+              source={require("assets/images/short-white-logo.png")}
             />
-            <Text color="white" ml={1} textAlign="left">
+            <Text color="white100" ml={1} textAlign="left">
               Looking for Artsy Mobile?{"\n"}Tap here to open
             </Text>
           </Flex>
@@ -192,34 +230,31 @@ export const LoginScreenContent: React.FC<LoginScreenProps> = ({}) => {
 
 const initialValues: LoginSchema = { email: "", password: "" }
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation, route }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = () => {
   const formik = useFormik<LoginSchema>({
     enableReinitialize: true,
     validateOnChange: false,
     validateOnBlur: true,
     initialValues,
     initialErrors: {},
-    onSubmit: async ({ email, password }) => {
+    onSubmit: ({ email, password }) => {
       GlobalStore.actions.auth
         .signInUsingEmail({ email, password })
-        .then((res: { success: boolean; message: string }) => {
-          if (!res.success) {
-            if (res.message) {
-              Alert.alert(res.message)
-            }
+        .then((res: { success: boolean; message: string | null }) => {
+          if (!res.success && res.message) {
+            Alert.alert(res.message)
           }
         })
         .catch((error: string) => {
           console.warn(error)
         })
-      // const res = await GlobalStore.actions.auth.signInUsingEmail({ email, password })
     },
     validationSchema: loginSchema,
   })
 
   return (
     <FormikProvider value={formik}>
-      <LoginScreenContent navigation={navigation} route={route} />
+      <LoginScreenContent />
     </FormikProvider>
   )
 }
