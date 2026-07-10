@@ -1,5 +1,6 @@
 import { Button, Flex, Text } from "@artsy/palette-mobile"
 import { graphql } from "react-relay"
+
 import { HomeQuery } from "__generated__/HomeQuery.graphql"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { GlobalStore } from "store/GlobalStore"

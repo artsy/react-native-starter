@@ -5,14 +5,15 @@ import { LogBox } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { RelayEnvironmentProvider } from "react-relay"
+
 import { Main } from "Navigation"
 import { defaultEnvironment } from "relay/defaultEnvironent"
+import { GlobalStoreProvider } from "store/GlobalStore"
 import { setupSentry } from "system/devTools/sentrySetup"
 import { FeatureFlagProvider } from "system/providers/FeatureFlagProvider"
 import { ThemeProvider } from "system/providers/ThemeProvider"
 import { GlobalRetryErrorBoundary } from "system/wrappers/RetryErrorBoundary"
 import { SuspenseWrapper } from "system/wrappers/SuspenseWrapper"
-import { GlobalStoreProvider } from "store/GlobalStore"
 
 LogBox.ignoreLogs(["Expected style "])
 

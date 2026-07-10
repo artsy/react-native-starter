@@ -1,5 +1,6 @@
 import { Platform } from "react-native"
 import { getBuildNumber, getUserAgentSync } from "react-native-device-info"
+
 import packageJson from "../../package.json"
 
 export const getUserAgent = () => {

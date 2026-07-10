@@ -8,7 +8,7 @@ interface GlobalStoreStateModel {
   devMenu: DevMenuModel
 }
 
-export interface GlobalStoreModel extends GlobalStoreStateModel {}
+export type GlobalStoreModel = GlobalStoreStateModel
 
 export const GlobalStoreModel: GlobalStoreModel = {
   auth: AuthModel,

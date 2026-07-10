@@ -1,6 +1,7 @@
-import { action, Action, thunk, Thunk } from "easy-peasy"
+import { Action, action, Thunk,thunk } from "easy-peasy"
 import { stringify } from "qs"
 import Keys from "react-native-keys"
+
 import { getUserAgent } from "helpers/getUserAgent"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 

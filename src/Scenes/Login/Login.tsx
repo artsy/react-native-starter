@@ -21,6 +21,7 @@ import {
 import LinearGradient from "react-native-linear-gradient"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
+
 import { GlobalStore } from "store/GlobalStore"
 import { logger } from "system/logger"
 

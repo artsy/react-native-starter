@@ -1,5 +1,6 @@
 import { Flex, Text } from "@artsy/palette-mobile"
 import { graphql, useFragment } from "react-relay"
+
 import { HomeUser_me$key } from "__generated__/HomeUser_me.graphql"
 
 interface HomeUserProps {

@@ -1,4 +1,4 @@
-import { computed, Computed } from "easy-peasy"
+import { Computed,computed } from "easy-peasy"
 
 type Environment = "staging" | "production"
 

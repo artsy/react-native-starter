@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/react-native"
+
 import { getLogLevel, logger, setLogLevel } from "system/logger"
 
 describe("logger", () => {

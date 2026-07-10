@@ -1,4 +1,5 @@
 import { authMiddleware as defaultAuthMiddleware } from "react-relay-network-modern"
+
 import { unsafe__getAuth } from "store/GlobalStore"
 
 export const authMiddleware = () =>

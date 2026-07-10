@@ -1,12 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import {
-  StoreProvider,
   createStore,
   createTypedHooks,
   persist,
+  StoreProvider,
 } from "easy-peasy"
 import { FC, PropsWithChildren } from "react"
 import { Platform } from "react-native"
+
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
 // Bump on every change to a store Model's shape. v1 added the `devMenu` slice

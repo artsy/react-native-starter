@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react-native"
 import { graphql } from "react-relay"
+
 import { HomeUserTestQuery } from "__generated__/HomeUserTestQuery.graphql"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { setupTestWrapper } from "utils/test/setupTestWrapper"

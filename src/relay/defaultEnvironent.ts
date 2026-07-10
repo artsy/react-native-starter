@@ -6,6 +6,7 @@ import {
   RelayNetworkLayer,
 } from "react-relay-network-modern"
 import { Environment, RecordSource, Store } from "relay-runtime"
+
 import { authMiddleware } from "relay/middlewares/authMiddleware"
 import { metaphysicsUrlMiddleware } from "relay/middlewares/metaphysicsUrlMiddleware"
 
