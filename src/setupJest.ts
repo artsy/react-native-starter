@@ -31,6 +31,12 @@ jest.mock("react-native-keys", () => ({
   },
 }))
 
+jest.mock("@unleash/proxy-client-react", () => ({
+  FlagProvider: ({ children }: { children: unknown }) => children,
+  useFlag: () => false,
+  useFlagsStatus: () => ({ flagsReady: true, flagsError: null }),
+}))
+
 jest.mock("react-native-device-info", () => ({
   getBuildNumber: () => "1",
   getUserAgentSync: () => "Artsy-Mobile/test",
