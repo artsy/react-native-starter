@@ -8,6 +8,8 @@ import { RelayEnvironmentProvider } from "react-relay"
 import { MainNavigationStack } from "MainNavigationStack"
 import { defaultEnvironment } from "relay/defaultEnvironent"
 import { ThemeProvider } from "system/providers/ThemeProvider"
+import { GlobalRetryErrorBoundary } from "system/wrappers/RetryErrorBoundary"
+import { SuspenseWrapper } from "system/wrappers/SuspenseWrapper"
 import { GlobalStoreProvider } from "store/GlobalStore"
 
 LogBox.ignoreLogs(["Expected style "])
@@ -18,7 +20,11 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
       <ScreenDimensionsProvider>
         <ThemeProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <NavigationContainer>{children}</NavigationContainer>
+            <GlobalRetryErrorBoundary>
+              <NavigationContainer>
+                <SuspenseWrapper>{children}</SuspenseWrapper>
+              </NavigationContainer>
+            </GlobalRetryErrorBoundary>
           </GestureHandlerRootView>
         </ThemeProvider>
       </ScreenDimensionsProvider>
