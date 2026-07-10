@@ -31,6 +31,7 @@
     "@artsy/palette-mobile": "24.2.0",
     "@d11/react-native-fast-image": "8.13.0",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/bottom-tabs": "6.5.11",
     "@react-navigation/native": "6.1.9",
     "@sentry/react-native": "7.11.0",
     "@react-navigation/native-stack": "6.9.17",
