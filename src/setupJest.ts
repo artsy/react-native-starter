@@ -38,3 +38,28 @@ jest.mock("react-native-haptic-feedback", () => ({
   default: { trigger: jest.fn() },
   trigger: jest.fn(),
 }))
+
+// palette-mobile peers that hit native code — stub with plain RN components.
+jest.mock("react-native-blurhash", () => {
+  const ReactNative = require("react-native")
+  return { Blurhash: ReactNative.View }
+})
+
+jest.mock("react-native-collapsible-tab-view", () => {
+  const ReactNative = require("react-native")
+  return {
+    Tabs: {
+      Container: ReactNative.View,
+      FlatList: ReactNative.FlatList,
+      FlashList: ReactNative.FlatList,
+      Lazy: ReactNative.View,
+      ScrollView: ReactNative.ScrollView,
+      Tab: ReactNative.View,
+      MasonryFlashList: ReactNative.FlatList,
+    },
+    useCurrentTabScrollY: () => ({ value: 0 }),
+    useFocusedTab: () => "SomeFocusedTab",
+    useHeaderMeasurements: () => ({ height: { value: 0 }, top: { value: 0 } }),
+    useTabNameContext: () => "Tab",
+  }
+})
