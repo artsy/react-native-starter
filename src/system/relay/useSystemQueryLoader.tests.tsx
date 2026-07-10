@@ -23,9 +23,11 @@ const TestComponent = () => {
 const { renderWithRelay } = setupTestWrapper({ Component: TestComponent })
 
 describe("useSystemQueryLoader", () => {
-  it("loads query data through the wrapper", () => {
+  it("loads query data through the wrapper", async () => {
     renderWithRelay({ Me: () => ({ name: "Andy Warhol" }) })
 
-    expect(screen.getByText("Andy Warhol")).toBeTruthy()
+    // The component suspends until the mock operation resolves, so wait for
+    // the re-render rather than asserting synchronously.
+    expect(await screen.findByText("Andy Warhol")).toBeTruthy()
   })
 })
