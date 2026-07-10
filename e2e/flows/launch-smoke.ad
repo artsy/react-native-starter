@@ -1,0 +1,13 @@
+# launch-smoke.ad — minimal launch smoke check.
+#
+# NOTE: This is a hand-authored placeholder so CI has something to run. `.ad`
+# checks are normally produced by the recorder — replace this with a proper
+# recording via `yarn e2e:record` once you have a booted device with the app.
+#
+# It opens the app on a booted simulator/emulator and asserts that the Login
+# screen renders on first launch (see src/Scenes/Login/Login.tsx).
+
+open Energy
+wait "Log In"
+is "Folio"
+close
