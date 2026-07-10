@@ -32,6 +32,7 @@
     "@d11/react-native-fast-image": "8.13.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "6.1.9",
+    "@sentry/react-native": "7.11.0",
     "@react-navigation/native-stack": "6.9.17",
     "easy-peasy": "6.1.0",
     "expo": "55.0.26",

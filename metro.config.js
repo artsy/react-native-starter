@@ -1,4 +1,6 @@
 // Learn more: https://docs.expo.dev/guides/customizing-metro/
-const { getDefaultConfig } = require("expo/metro-config")
+const { getSentryExpoConfig } = require("@sentry/react-native/metro")
 
-module.exports = getDefaultConfig(__dirname)
+// getSentryExpoConfig wraps Expo's default Metro config and adds Sentry's
+// source-map upload support.
+module.exports = getSentryExpoConfig(__dirname)
