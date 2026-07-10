@@ -1,0 +1,37 @@
+{
+  "source": {
+    "roots": ["src"],
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/*.tests.ts",
+      "**/*.tests.tsx",
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "**/__tests__/**",
+      "**/__generated__/**",
+      "**/*.d.ts",
+      "src/setupJest.ts"
+    ]
+  },
+  "resolver": {
+    "tsconfig": ".sniffler/tsconfig.sniffler.json"
+  },
+  "tests": {
+    "manifest": ".sniffler/test-map.json",
+    "runAllWhenChanged": [
+      "package.json",
+      "yarn.lock",
+      "app.json",
+      "babel.config.js",
+      "metro.config.js",
+      "relay.config.js",
+      "index.js",
+      ".sniffler/**",
+      "e2e/**"
+    ]
+  },
+  "output": {
+    "format": "text"
+  }
+}

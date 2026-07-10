@@ -1,0 +1,6 @@
+[
+  {
+    "test": "e2e/flows/launch-smoke.ad",
+    "dependsOn": ["src/App.tsx", "src/Navigation.tsx", "src/Scenes/Login/Login.tsx"]
+  }
+]

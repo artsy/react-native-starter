@@ -44,6 +44,10 @@ yarn-error.log
 .cache
 .jest/cache
 
+# Sniffler — generated cache / diagnostics (config + test-map ARE committed)
+.sniffler/cache.json
+.sniffler/diagnostics.json
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

@@ -44,6 +44,10 @@ jobs:
 
   # Full e2e run against a built app on a macOS runner (iOS simulator).
   # Manual only until app builds are wired up in CI.
+  #
+  # Which flows run is chosen by Sniffler (see .github/workflows/e2e-impact.yml
+  # for the PR-time report): only the impacted flows run when Sniffler produces
+  # a partial selection, otherwise the FULL suite runs (fail-open).
   e2e-ios:
     name: iOS e2e (manual)
     if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -54,6 +58,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so Sniffler can diff against the base branch.
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -66,6 +73,34 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # Select the agent-device flows impacted by this branch. Sets $E2E_FLOWS
+      # (space-separated flow list) for the run step below, defaulting to the
+      # full suite (`e2e/flows`) whenever Sniffler errors or finds no partial
+      # impact. Never fails the job.
+      - name: Select impacted e2e flows (Sniffler)
+        env:
+          BASE_REF: origin/${{ github.event.pull_request.base.ref || 'main' }}
+        run: |
+          git fetch --no-tags origin "${{ github.event.pull_request.base.ref || 'main' }}" || true
+          set +e
+          yarn sniffler impact --base "$BASE_REF" --head HEAD --format json > sniffler.json 2> sniffler.err
+          STATUS=$?
+          set -e
+          if [ "$STATUS" -ne 0 ]; then
+            echo "⚠️ Sniffler failed (exit $STATUS) — failing open, running the FULL e2e suite." | tee -a "$GITHUB_STEP_SUMMARY"
+            cat sniffler.err 2>/dev/null || true
+            echo "E2E_FLOWS=e2e/flows" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          FLOWS=$(node -e 'const fs=require("fs");let d;try{d=JSON.parse(fs.readFileSync("sniffler.json","utf8"))}catch(e){process.exit(3)}process.stdout.write((d.recommendedTests||[]).map(t=>t.test).join(" "))')
+          if [ $? -ne 0 ] || [ -z "$FLOWS" ]; then
+            echo "No partial impact detected (or unparseable) — running the FULL e2e suite." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "E2E_FLOWS=e2e/flows" >> "$GITHUB_ENV"
+          else
+            echo "Running impacted flows only: $FLOWS" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "E2E_FLOWS=$FLOWS" >> "$GITHUB_ENV"
+          fi
+
       - name: agent-device doctor
         run: yarn e2e:doctor
 
@@ -74,13 +109,15 @@ jobs:
       #   - <build the iOS app and boot a simulator>
       #   - <install the .app on the simulator>
       - name: Run recorded e2e checks
-        run: yarn e2e
+        run: yarn agent-device test ${E2E_FLOWS:-e2e/flows}
         continue-on-error: true # remove once the app build step above is in place
 
   # Full e2e run against a built app on an Android emulator (Ubuntu runner).
   # Manual only (workflow_dispatch) and best-effort: it is NOT a required check
   # and has NOT been validated in CI yet — trigger it from the Actions tab to
   # confirm it works on a real emulator.
+  #
+  # Flow selection works the same as the iOS job (Sniffler → $E2E_FLOWS).
   e2e-android:
     name: Android e2e (manual)
     if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -91,6 +128,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so Sniffler can diff against the base branch.
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -108,6 +148,32 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+
+      # Select the agent-device flows impacted by this branch (sets $E2E_FLOWS).
+      # Defaults to the full suite (`e2e/flows`) on error / no partial impact.
+      - name: Select impacted e2e flows (Sniffler)
+        env:
+          BASE_REF: origin/${{ github.event.pull_request.base.ref || 'main' }}
+        run: |
+          git fetch --no-tags origin "${{ github.event.pull_request.base.ref || 'main' }}" || true
+          set +e
+          yarn sniffler impact --base "$BASE_REF" --head HEAD --format json > sniffler.json 2> sniffler.err
+          STATUS=$?
+          set -e
+          if [ "$STATUS" -ne 0 ]; then
+            echo "⚠️ Sniffler failed (exit $STATUS) — failing open, running the FULL e2e suite." | tee -a "$GITHUB_STEP_SUMMARY"
+            cat sniffler.err 2>/dev/null || true
+            echo "E2E_FLOWS=e2e/flows" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          FLOWS=$(node -e 'const fs=require("fs");let d;try{d=JSON.parse(fs.readFileSync("sniffler.json","utf8"))}catch(e){process.exit(3)}process.stdout.write((d.recommendedTests||[]).map(t=>t.test).join(" "))')
+          if [ $? -ne 0 ] || [ -z "$FLOWS" ]; then
+            echo "No partial impact detected (or unparseable) — running the FULL e2e suite." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "E2E_FLOWS=e2e/flows" >> "$GITHUB_ENV"
+          else
+            echo "Running impacted flows only: $FLOWS" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "E2E_FLOWS=$FLOWS" >> "$GITHUB_ENV"
+          fi
 
       - name: agent-device doctor
         run: yarn e2e:doctor
@@ -137,4 +203,4 @@ jobs:
           profile: pixel_6
           script: |
             adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            yarn e2e
+            yarn agent-device test ${E2E_FLOWS:-e2e/flows}
