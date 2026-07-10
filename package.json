@@ -121,7 +121,7 @@
     "react-test-renderer": "19.2.0",
     "relay-compiler": "^20.1.0",
     "relay-test-utils": "18.2.0",
-    "typescript": "5.9.2"
+    "typescript": "7.0.2"
   },
   "resolutions": {
     "tslib": ">=2.6.1"
