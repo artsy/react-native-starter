@@ -168,8 +168,24 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # Caches the Gradle user home (deps + wrapper) and build cache across runs.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
       - name: Enable Corepack (Yarn 4)
         run: corepack enable
+
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: |
+            .yarn/cache
+            .cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install
@@ -204,11 +220,35 @@ jobs:
         run: yarn e2e:doctor
         continue-on-error: true
 
+      # The `expo-font` plugin reads Artsy's Unica77LL fonts from assets/fonts,
+      # which are gitignored and fetched by `yarn setup:artsy` from a private S3
+      # bucket (unavailable in OSS CI). Create empty placeholders so `expo
+      # prebuild` resolves them; the smoke test falls back to system fonts.
+      - name: Create placeholder fonts for prebuild
+        run: |
+          mkdir -p assets/fonts
+          touch assets/fonts/Unica77LL-Italic.otf \
+                assets/fonts/Unica77LL-MediumItalic.otf \
+                assets/fonts/Unica77LL-Medium.otf \
+                assets/fonts/Unica77LL-Regular.otf
+
       - name: Expo prebuild (Android)
         run: npx expo prebuild --platform android
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      # The release build bundles JS at build time, so the Relay artifacts must
+      # exist or Metro fails to resolve co-located queries. (They're committed,
+      # but regenerate to be safe against a stale checkout.)
+      - name: Compile Relay
+        run: yarn relay
+
+      # Build a RELEASE APK, not debug: a debug build with expo-dev-client boots
+      # into the dev-client launcher (needs Metro), so the app UI never renders
+      # in CI. The release APK embeds the JS bundle and drops the dev launcher.
+      # SENTRY_DISABLE_AUTO_UPLOAD skips the sourcemap upload that needs a token.
+      - name: Build release APK
+        env:
+          SENTRY_DISABLE_AUTO_UPLOAD: "true"
+        run: ./gradlew assembleRelease --build-cache
         working-directory: android
 
       # Hardware acceleration for the emulator on the Ubuntu runner.
@@ -218,14 +258,34 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # No continue-on-error: the manual job now reflects the real launch-smoke
+      # result. The run step retries to absorb agent-device's intermittent
+      # app-launch flake (occasionally the home launcher stays foreground
+      # instead of the app after install), force-stopping the app between tries
+      # so each attempt cold-launches it.
       - name: Run agent-device e2e on emulator
         uses: reactivecircus/android-emulator-runner@v2.33.0
-        continue-on-error: true # best-effort until the flow is validated on a real emulator
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: pixel_6
           script: |
-            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            yarn agent-device test ${E2E_FLOWS:-e2e/flows}
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            attempts=3
+            n=0
+            until [ "$n" -ge "$attempts" ]; do
+              n=$((n + 1))
+              echo "::group::agent-device e2e attempt $n/$attempts"
+              if yarn agent-device test ${E2E_FLOWS:-e2e/flows}; then
+                echo "::endgroup::"
+                echo "agent-device e2e passed on attempt $n"
+                exit 0
+              fi
+              echo "::endgroup::"
+              echo "attempt $n failed; force-stopping the app and retrying"
+              adb shell am force-stop net.artsy.energy || true
+              sleep 5
+            done
+            echo "agent-device e2e failed after $attempts attempts"
+            exit 1

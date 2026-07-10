@@ -9,5 +9,5 @@
 
 open Energy
 wait "Log In"
-is "Folio"
+is visible "Folio"
 close
