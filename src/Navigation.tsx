@@ -61,7 +61,9 @@ const RootStack = createNativeStackNavigator({
 })
 
 // Register the param list globally so `useNavigation()` is typed everywhere.
+// react-navigation's sanctioned pattern requires a global namespace here.
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
     interface RootParamList extends StaticParamList<typeof RootStack> {}
   }
