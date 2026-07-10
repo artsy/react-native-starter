@@ -88,7 +88,8 @@ are generated from `app.json` and the installed native dependencies:
   cross-cutting behavior later (e.g. an offline-first fetch policy) without touching
   screens — mirroring Eigen/Energy.
 - Run `yarn relay` after modifying any GraphQL query or fragment. Generated
-  artifacts live in `src/__generated__/` — never edit these by hand.
+  artifacts live in `src/__generated__/` and **are committed** — never edit them
+  by hand, but do commit the regenerated files alongside your query changes.
 - Use **Luxon** for date/time — do not add moment.
 - Use the **`logger`** (`system/logger`) instead of `console.*` — it gives
   consistent, level-prefixed output and is the single seam wired to Sentry

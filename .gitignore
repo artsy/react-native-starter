@@ -76,10 +76,9 @@ assets/fonts/*
 keys*.json
 !keys.example.json
 
-# Relay — ignore generated artifacts but keep the directory so the
-# relay-compiler `artifactDirectory` exists on a fresh checkout.
-src/__generated__/*
-!src/__generated__/.gitkeep
+# Relay — generated artifacts ARE committed (run `yarn relay` after changing
+# a query/fragment and commit the result). Committing them keeps release
+# bundling and a fresh checkout working without a compile step.
 
 # Metro health check
 .metro-health-check*
