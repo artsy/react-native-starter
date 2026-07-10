@@ -1,12 +1,11 @@
 import { ScreenDimensionsProvider } from "@artsy/palette-mobile"
-import { NavigationContainer } from "@react-navigation/native"
 import * as Sentry from "@sentry/react-native"
 import { ReactNode } from "react"
 import { LogBox } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { RelayEnvironmentProvider } from "react-relay"
-import { MainNavigationStack } from "MainNavigationStack"
+import { Main } from "Navigation"
 import { defaultEnvironment } from "relay/defaultEnvironent"
 import { setupSentry } from "system/devTools/sentrySetup"
 import { ThemeProvider } from "system/providers/ThemeProvider"
@@ -25,9 +24,7 @@ const AppProviders = ({ children }: { children: ReactNode }) => (
         <ThemeProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <GlobalRetryErrorBoundary>
-              <NavigationContainer>
-                <SuspenseWrapper>{children}</SuspenseWrapper>
-              </NavigationContainer>
+              <SuspenseWrapper>{children}</SuspenseWrapper>
             </GlobalRetryErrorBoundary>
           </GestureHandlerRootView>
         </ThemeProvider>
@@ -40,7 +37,7 @@ export const App = Sentry.wrap(() => {
   return (
     <GlobalStoreProvider>
       <AppProviders>
-        <MainNavigationStack />
+        <Main />
       </AppProviders>
     </GlobalStoreProvider>
   )

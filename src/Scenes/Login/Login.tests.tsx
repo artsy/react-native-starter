@@ -4,7 +4,7 @@ import { renderWithWrappers } from "utils/test/renderWithWrappers"
 
 describe("LoginScreen", () => {
   it("renders the login form", () => {
-    renderWithWrappers(<LoginScreen {...({} as any)} />)
+    renderWithWrappers(<LoginScreen />)
 
     expect(screen.getByText("Log In")).toBeTruthy()
     expect(screen.getByText("With Your Artsy Partner Account")).toBeTruthy()
@@ -12,7 +12,7 @@ describe("LoginScreen", () => {
   })
 
   it("shows the Artsy Mobile prompt", () => {
-    renderWithWrappers(<LoginScreen {...({} as any)} />)
+    renderWithWrappers(<LoginScreen />)
 
     expect(screen.getByText(/Looking for Artsy Mobile/)).toBeTruthy()
   })
