@@ -68,6 +68,13 @@ are generated from `app.json` and the installed native dependencies:
 
 - Use **absolute imports** from `src/` (module-resolver root is `./src`) — do not
   use relative imports across folders. Same-folder relative imports are allowed.
+- Imports are **auto-sorted by `eslint-plugin-simple-import-sort`** (side-effects,
+  node builtins, external packages, absolute `src/` imports, then relative). Do not
+  hand-order imports — `yarn lint` (`eslint --fix`) fixes ordering for you.
+- Accessibility is linted by **`eslint-plugin-react-native-a11y`** (warnings, not
+  errors). Add `accessibilityLabel` and `accessibilityRole` (and an
+  `accessibilityHint` where useful) to interactive elements, and avoid nested
+  touchables.
 - Do not import components/hooks directly from another Scene — extract shared
   code to `src/components/` (shared UI) or `src/helpers/` (shared utilities).
 - Use **`@artsy/palette-mobile`** for UI primitives (`Flex`, `Text`, `Button`,
