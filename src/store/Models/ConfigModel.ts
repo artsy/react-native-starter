@@ -4,7 +4,7 @@ interface ConfigModelState {
   environment: EnvironmentModel
 }
 
-export interface ConfigModel extends ConfigModelState {}
+export type ConfigModel = ConfigModelState
 
 export const ConfigModel: ConfigModel = {
   environment: EnvironmentModel,

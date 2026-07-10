@@ -7,11 +7,12 @@ import {
   useColor,
 } from "@artsy/palette-mobile"
 import { ScrollView, TouchableOpacity } from "react-native"
+
 import { GlobalStore } from "store/GlobalStore"
 import {
-  features,
   FeatureFlagName,
   featureFlagNames,
+  features,
 } from "system/featureFlags/features"
 import { useFeatureFlag } from "system/featureFlags/useFeatureFlag"
 

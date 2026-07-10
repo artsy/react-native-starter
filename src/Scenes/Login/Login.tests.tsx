@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react-native"
+
 import { LoginScreen } from "Scenes/Login/Login"
 import { renderWithWrappers } from "utils/test/renderWithWrappers"
 

@@ -1,4 +1,5 @@
 import { urlMiddleware } from "react-relay-network-modern"
+
 import { getUserAgent } from "helpers/getUserAgent"
 import { unsafe__getAuth, unsafe__getEnvironment } from "store/GlobalStore"
 

@@ -1,10 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { FlagProvider } from "@unleash/proxy-client-react"
-import { IConfig } from "unleash-proxy-client"
 import { FC, PropsWithChildren, useEffect } from "react"
 import { getBuildNumber } from "react-native-device-info"
-import packageJson from "../../../package.json"
+import { IConfig } from "unleash-proxy-client"
+
 import { GlobalStore } from "store/GlobalStore"
+
+import packageJson from "../../../package.json"
 
 // Configure via env to enable Unleash (left unset in the template so a fresh app
 // boots without feature-flag credentials). Read flags through `useFeatureFlag`

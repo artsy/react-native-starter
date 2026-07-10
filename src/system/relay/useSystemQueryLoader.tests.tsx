@@ -1,6 +1,7 @@
 import { Text } from "@artsy/palette-mobile"
 import { screen } from "@testing-library/react-native"
 import { graphql } from "react-relay"
+
 import { useSystemQueryLoaderTestQuery } from "__generated__/useSystemQueryLoaderTestQuery.graphql"
 import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 import { setupTestWrapper } from "utils/test/setupTestWrapper"

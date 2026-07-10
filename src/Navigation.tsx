@@ -6,6 +6,7 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useStoreRehydrated } from "easy-peasy"
+
 import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
 import { HomeScreen } from "Scenes/Home/Home"
 import { ExampleListScreen } from "Scenes/List/ExampleList"
@@ -81,6 +82,9 @@ const RootStack = createNativeStackNavigator({
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
+    // Must stay an interface (not a type alias) so it merges with react-navigation's
+    // RootParamList; an empty-extends interface is the sanctioned pattern here.
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface RootParamList extends StaticParamList<typeof RootStack> {}
   }
 }

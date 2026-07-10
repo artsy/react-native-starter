@@ -1,6 +1,7 @@
 import { useFlag } from "@unleash/proxy-client-react"
+
 import { GlobalStore } from "store/GlobalStore"
-import { features, FeatureFlagName } from "system/featureFlags/features"
+import { FeatureFlagName,features } from "system/featureFlags/features"
 
 /**
  * Resolve whether a feature is enabled for the current build and user.
