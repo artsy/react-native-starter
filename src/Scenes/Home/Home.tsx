@@ -1,11 +1,12 @@
 import { Button, Flex, Text } from "@artsy/palette-mobile"
-import { graphql, useLazyLoadQuery } from "react-relay"
+import { graphql } from "react-relay"
 import { HomeQuery } from "__generated__/HomeQuery.graphql"
 import { HomeUser } from "Scenes/Home/HomeUser"
 import { GlobalStore } from "store/GlobalStore"
+import { useSystemQueryLoader } from "system/relay/useSystemQueryLoader"
 
 export const HomeScreen = () => {
-  const data = useLazyLoadQuery<HomeQuery>(
+  const data = useSystemQueryLoader<HomeQuery>(
     graphql`
       query HomeQuery {
         me {
