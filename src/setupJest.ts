@@ -11,6 +11,7 @@ jest.mock("@sentry/react-native", () => ({
   wrap: (component: unknown) => component,
   captureException: jest.fn(),
   captureMessage: jest.fn(),
+  addBreadcrumb: jest.fn(),
 }))
 
 jest.mock("react-native-reanimated", () =>
