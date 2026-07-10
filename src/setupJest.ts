@@ -23,11 +23,11 @@ jest.mock("react-native-worklets", () =>
   require("react-native-worklets/src/mock")
 )
 
-jest.mock("react-native-config", () => ({
+jest.mock("react-native-keys", () => ({
   __esModule: true,
   default: {
-    ARTSY_API_CLIENT_KEY: "test-client-key",
-    ARTSY_API_CLIENT_SECRET: "test-client-secret", // pragma: allowlist secret
+    OSS: "true",
+    secureFor: (key: string) => `test-${key}`,
   },
 }))
 

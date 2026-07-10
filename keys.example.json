@@ -1,0 +1,7 @@
+{
+  "OSS": "true",
+  "secure": {
+    "ARTSY_API_CLIENT_KEY": "-",
+    "ARTSY_API_CLIENT_SECRET": "-"
+  }
+}

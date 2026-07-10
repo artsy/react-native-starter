@@ -68,6 +68,10 @@ assets/fonts/*
 **/.env*
 !.env.example
 
+# react-native-keys — real keys files hold secrets; only the example is tracked
+keys*.json
+!keys.example.json
+
 # Relay — ignore generated artifacts but keep the directory so the
 # relay-compiler `artifactDirectory` exists on a fresh checkout.
 src/__generated__/*

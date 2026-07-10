@@ -1,6 +1,6 @@
 import { action, Action, thunk, Thunk } from "easy-peasy"
 import { stringify } from "qs"
-import Config from "react-native-config"
+import Keys from "react-native-keys"
 import { getUserAgent } from "helpers/getUserAgent"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
@@ -74,8 +74,8 @@ export const AuthModel: AuthModel = {
     const gravityBaseURL = context.getStoreState().config.environment.strings.gravityURL
 
     const tokenURL = `${gravityBaseURL}/api/v1/xapp_token?${stringify({
-      client_id: Config.ARTSY_API_CLIENT_KEY,
-      client_secret: Config.ARTSY_API_CLIENT_SECRET,
+      client_id: Keys.secureFor("ARTSY_API_CLIENT_KEY"),
+      client_secret: Keys.secureFor("ARTSY_API_CLIENT_SECRET"),
     })}`
 
     try {
@@ -133,8 +133,8 @@ export const AuthModel: AuthModel = {
           password,
           grant_type: "credentials",
           scope: "offline_access",
-          client_id: Config.ARTSY_API_CLIENT_KEY,
-          client_secret: Config.ARTSY_API_CLIENT_SECRET,
+          client_id: Keys.secureFor("ARTSY_API_CLIENT_KEY"),
+          client_secret: Keys.secureFor("ARTSY_API_CLIENT_SECRET"),
         },
       })
       const resJson = await result.json()
