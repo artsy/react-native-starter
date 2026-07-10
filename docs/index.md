@@ -23,11 +23,15 @@ features:
   - title: TypeScript, strict
     details: Strict-mode TypeScript with absolute imports from src/. Relay compiler runs as part of the type-check.
   - title: Relay + Metaphysics
-    details: Relay 20 wired to Artsy's GraphQL API with co-located fragments and hooks (useLazyLoadQuery, useFragment).
+    details: Relay 20 wired to Artsy's GraphQL API with co-located fragments and a useSystemQueryLoader / useSystemRelayEnvironment seam for future cross-cutting behavior.
   - title: Palette design system
     details: UI primitives from @artsy/palette-mobile (Flex, Text, Button, Input, Theme) — no re-implementing the basics.
   - title: State + persistence
     details: Global state with easy-peasy, persisted through async-storage with versioned migrations.
+  - title: Structured logging
+    details: A single leveled logger (system/logger) instead of console.* — level-prefixed in dev, Sentry-wired in production.
+  - title: End-to-end tests
+    details: agent-device drives real simulators/emulators from recorded .ad flows, with Sniffler selecting only the flows a diff affects.
   - title: Batteries included
     details: React Navigation (static API), Sentry, Unleash feature flags, Formik, and Jest + @testing-library/react-native.
 ---

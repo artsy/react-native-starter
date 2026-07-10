@@ -85,10 +85,22 @@ yarn android        # Prebuild + run on Android
 yarn prebuild       # Regenerate native ios/ and android/ folders
 yarn test           # Jest
 yarn type-check     # Relay compile + tsc
-yarn lint           # ESLint (auto-fix)
+yarn lint           # ESLint (auto-fix + auto-sort imports)
 yarn relay          # Compile Relay artifacts
 yarn sync-schema    # Refresh data/schema.graphql from Metaphysics
+yarn e2e            # Run recorded agent-device e2e checks (e2e/flows)
+yarn e2e:doctor     # Verify the agent-device environment
+yarn e2e:impact     # Sniffler: which e2e flows a diff affects
+yarn docs:dev       # VitePress docs dev server
+yarn docs:build     # Build the docs site
+yarn docs:preview   # Preview the built docs site
 ```
+
+`yarn lint` auto-fixes and **auto-sorts imports** (via `eslint-plugin-simple-import-sort`),
+so import ordering is never something you maintain by hand. See
+[Testing → Running in CI](./testing#running-in-ci) for the accessibility
+(`react-native-a11y`) lint rules and the full set of CI workflows, and
+[E2E Testing](./e2e-testing) for `yarn e2e*`.
 
 ## Pre-commit verification
 

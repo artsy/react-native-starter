@@ -28,6 +28,7 @@ export default defineConfig({
       { text: "Feature Flags", link: "/feature-flags" },
       { text: "Architecture", link: "/architecture" },
       { text: "Testing", link: "/testing" },
+      { text: "E2E Testing", link: "/e2e-testing" },
     ],
 
     sidebar: [
@@ -39,6 +40,7 @@ export default defineConfig({
           { text: "Feature Flags", link: "/feature-flags" },
           { text: "Architecture", link: "/architecture" },
           { text: "Testing", link: "/testing" },
+          { text: "E2E Testing", link: "/e2e-testing" },
         ],
       },
     ],
