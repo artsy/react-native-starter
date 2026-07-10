@@ -76,3 +76,65 @@ jobs:
       - name: Run recorded e2e checks
         run: yarn e2e
         continue-on-error: true # remove once the app build step above is in place
+
+  # Full e2e run against a built app on an Android emulator (Ubuntu runner).
+  # Manual only (workflow_dispatch) and best-effort: it is NOT a required check
+  # and has NOT been validated in CI yet — trigger it from the Actions tab to
+  # confirm it works on a real emulator.
+  e2e-android:
+    name: Android e2e (manual)
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: agent-device doctor
+        run: yarn e2e:doctor
+        continue-on-error: true
+
+      - name: Expo prebuild (Android)
+        run: npx expo prebuild --platform android
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+        working-directory: android
+
+      # Hardware acceleration for the emulator on the Ubuntu runner.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run agent-device e2e on emulator
+        uses: reactivecircus/android-emulator-runner@v2.33.0
+        continue-on-error: true # best-effort until the flow is validated on a real emulator
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+            yarn e2e
