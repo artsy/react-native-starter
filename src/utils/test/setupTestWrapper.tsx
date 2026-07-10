@@ -1,5 +1,10 @@
 import { act } from "@testing-library/react-native"
-import { GraphQLTaggedNode, QueryRenderer } from "react-relay"
+import { Suspense } from "react"
+import {
+  GraphQLTaggedNode,
+  QueryRenderer,
+  RelayEnvironmentProvider,
+} from "react-relay"
 import { OperationType } from "relay-runtime"
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils"
 import { MockResolvers } from "relay-test-utils/lib/RelayMockPayloadGenerator"
@@ -67,7 +72,14 @@ export const setupTestWrapper = <T extends OperationType>({
           }}
         />
       ) : (
-        <Component {...props} />
+        // Component issues its own query (e.g. via useSystemQueryLoader /
+        // useLazyLoadQuery): provide the mock environment and a Suspense
+        // boundary so it can suspend until `resolveMostRecentOperation` runs.
+        <RelayEnvironmentProvider environment={env}>
+          <Suspense fallback={null}>
+            <Component {...props} />
+          </Suspense>
+        </RelayEnvironmentProvider>
       )
 
     const view = renderWithWrappers(<TestRenderer />)

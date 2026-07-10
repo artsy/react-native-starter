@@ -72,8 +72,14 @@ are generated from `app.json` and the installed native dependencies:
   code to `src/components/` (shared UI) or `src/helpers/` (shared utilities).
 - Use **`@artsy/palette-mobile`** for UI primitives (`Flex`, `Text`, `Button`,
   `Input`, `Spacer`, `useColor`, `useSpace`, `Theme`) — do not re-implement them.
-- Prefer **Relay hooks** (`useLazyLoadQuery`, `useFragment`, `usePaginationFragment`)
-  over HOCs. Co-locate fragments with the component that uses them.
+- Prefer **Relay hooks** (`useFragment`, `usePaginationFragment`) over HOCs, and
+  co-locate fragments with the component that uses them.
+- Load queries through **`useSystemQueryLoader`** (`src/system/relay/`) instead of
+  calling `useLazyLoadQuery` directly, and read the environment through
+  **`useSystemRelayEnvironment`** instead of `useRelayEnvironment`. These are thin
+  wrappers today, but keeping every call site behind them gives us one seam to add
+  cross-cutting behavior later (e.g. an offline-first fetch policy) without touching
+  screens — mirroring Eigen/Energy.
 - Run `yarn relay` after modifying any GraphQL query or fragment. Generated
   artifacts live in `src/__generated__/` — never edit these by hand.
 - Use **Luxon** for date/time — do not add moment.
