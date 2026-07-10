@@ -8,7 +8,7 @@ with the same stack and patterns.
 
 ## Tech Stack
 
-- **React Native + Expo** — Cross-platform mobile framework, prebuild workflow
+- **React Native 0.85 + Expo SDK 56** (React 19.2) — Cross-platform mobile framework, prebuild workflow
 - **TypeScript** — Strict mode enabled, avoid `any`
 - **Relay** — GraphQL data fetching (hooks preferred over HOCs)
 - **GraphQL / Metaphysics** — Artsy's GraphQL API
