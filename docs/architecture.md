@@ -72,9 +72,15 @@ bump the version and add a migration so persisted state upgrades cleanly.
 
 Data fetching uses **Relay 20** against Artsy's Metaphysics GraphQL API.
 
-- Prefer Relay **hooks** (`useLazyLoadQuery`, `useFragment`,
-  `usePaginationFragment`) over HOCs.
-- **Co-locate fragments** with the component that consumes them.
+- Load queries through **`useSystemQueryLoader`** (from `src/system/relay/`)
+  rather than calling `useLazyLoadQuery` directly, and access the Relay
+  environment through **`useSystemRelayEnvironment`** rather than
+  `useRelayEnvironment`. Today both are thin drop-in wrappers, but they are the
+  single seam where cross-cutting behavior (offline guards, global fetch
+  policy/key, environment resets) can be added later without touching call
+  sites — mirroring Eigen/Energy.
+- Prefer Relay **hooks** (`useFragment`, `usePaginationFragment`) over HOCs, and
+  **co-locate fragments** with the component that consumes them.
 - Run `yarn relay` after changing any query or fragment. Generated artifacts
   live in `src/__generated__/` and are **never** edited by hand (they're
   gitignored except for `.gitkeep`).
@@ -82,6 +88,27 @@ Data fetching uses **Relay 20** against Artsy's Metaphysics GraphQL API.
   `src/relay/middlewares/`) and provided via `RelayEnvironmentProvider` in
   `App.tsx`.
 - `yarn type-check` runs the Relay compiler before `tsc`.
+
+## Logging
+
+App code logs through the structured, leveled **`logger`** in
+`src/system/logger/` — never `console.*` directly:
+
+```ts
+import { logger } from "system/logger"
+
+logger.debug("cache hit", { key })
+logger.info("user signed in", { userId })
+logger.warn("slow request", { ms })
+logger.error("failed to open app", err, { url })
+```
+
+The logger is the single logging seam: in development it prints level-prefixed
+console output, and in production it is wired to Sentry (`debug`/`info` become
+breadcrumbs, `warn` captures a warning, `error` captures the passed `Error` as
+an exception). The minimum level defaults to `debug` in dev and `info` in
+production. Routing every call site through one module means future transports
+(file, remote, etc.) can be added in one place.
 
 ## File organization
 
@@ -96,13 +123,17 @@ src/
 ├── store/                  # easy-peasy global store + Models
 ├── system/                 # Core infra
 │   ├── devTools/           # Sentry setup
+│   ├── logger/             # Structured leveled logger (Sentry-wired)
 │   ├── providers/          # Theme, FeatureFlag providers
+│   ├── relay/              # useSystemQueryLoader / useSystemRelayEnvironment
 │   └── wrappers/           # Suspense + error-boundary wrappers
 ├── assets/                 # Images and fonts
 ├── utils/test/             # Test helpers (setupTestWrapper, renderWithWrappers)
 └── __generated__/          # Relay-generated artifacts (do not edit)
 data/
 └── schema.graphql          # Metaphysics GraphQL schema
+e2e/
+└── flows/                  # Recorded agent-device .ad e2e checks
 ```
 
 ## Conventions
@@ -115,6 +146,12 @@ data/
   `Input`, `Spacer`, `useColor`, `useSpace`, `Theme`) rather than
   re-implementing them.
 - Use **Luxon** for date/time — do not add moment.
+- Log through the **`logger`** (`system/logger`) instead of `console.*`.
+- Load Relay queries via **`useSystemQueryLoader`** and read the environment via
+  **`useSystemRelayEnvironment`** (not the raw Relay hooks).
+- Imports are **auto-sorted** by `eslint-plugin-simple-import-sort` (run
+  `yarn lint`), and `eslint-plugin-react-native-a11y` flags missing
+  accessibility props on interactive components (at `warn`).
 - Naming: components `PascalCase.tsx`, hooks `useCamelCase`, constants
   `UPPER_SNAKE_CASE`, utilities `camelCase.ts`.
 - PR titles follow [Conventional Commits](https://www.conventionalcommits.org/)

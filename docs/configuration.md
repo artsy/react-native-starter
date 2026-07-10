@@ -89,6 +89,24 @@ export function setupSentry(props = {}): void {
 
 Set `EXPO_PUBLIC_SENTRY_DSN` in a release build to start reporting.
 
+## Logging
+
+App code logs through the structured `logger` in `src/system/logger/` rather
+than calling `console.*` directly:
+
+```ts
+import { logger } from "system/logger"
+
+logger.info("user signed in", { userId })
+logger.error("failed to open app", err, { url })
+```
+
+In development it prints level-prefixed console output; in production it feeds
+Sentry (breadcrumbs for `debug`/`info`, captures for `warn`/`error`). Because
+everything goes through one seam, the Sentry wiring above is the only place
+logging integrations are configured. See
+[Architecture → Logging](./architecture#logging) for the level semantics.
+
 ## Feature flags (Unleash)
 
 Feature flags are served by [Unleash](https://www.getunleash.io/) through
