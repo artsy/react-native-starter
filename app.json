@@ -55,6 +55,14 @@
             "assets/fonts/Unica77LL-Regular.otf"
           ]
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "your-sentry-org",
+          "project": "your-sentry-project",
+          "url": "https://sentry.io/"
+        }
       ]
     ]
   }
