@@ -86,6 +86,10 @@ tsconfig.tsbuildinfo
 # testing
 /coverage
 
+# VitePress docs site (build output + cache)
+docs/.vitepress/dist
+docs/.vitepress/cache
+
 # Expo + prebuild (native projects are generated, not committed)
 .expo
 dist/
