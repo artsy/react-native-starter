@@ -77,6 +77,9 @@ are generated from `app.json` and the installed native dependencies:
 - Run `yarn relay` after modifying any GraphQL query or fragment. Generated
   artifacts live in `src/__generated__/` — never edit these by hand.
 - Use **Luxon** for date/time — do not add moment.
+- Use the **`logger`** (`system/logger`) instead of `console.*` — it gives
+  consistent, level-prefixed output and is the single seam wired to Sentry
+  (breadcrumbs + captures), so transports can be added without touching call sites.
 - Read global state with `GlobalStore.useAppState(...)`; dispatch with
   `GlobalStore.actions...`. If you change a store Model's shape, bump the store
   version and add a migration.

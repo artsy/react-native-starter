@@ -22,6 +22,7 @@ import LinearGradient from "react-native-linear-gradient"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
 import { GlobalStore } from "store/GlobalStore"
+import { logger } from "system/logger"
 
 export interface LoginSchema {
   email: string
@@ -80,7 +81,10 @@ export const LoginScreenContent: React.FC = () => {
         Linking.openURL(storeURL)
       }
     } catch (error) {
-      console.error("couldn't open artsy mobile app")
+      logger.error(
+        "couldn't open artsy mobile app",
+        error instanceof Error ? error : undefined
+      )
     }
   }
 
@@ -243,7 +247,7 @@ export const LoginScreen = () => {
           }
         })
         .catch((error: string) => {
-          console.warn(error)
+          logger.warn(error)
         })
     },
     validationSchema: loginSchema,
