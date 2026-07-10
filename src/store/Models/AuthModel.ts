@@ -1,8 +1,8 @@
 import { action, Action, thunk, Thunk } from "easy-peasy"
-import Config from "react-native-config"
-import { GlobalStoreModel } from "./GlobalStoreModel"
 import { stringify } from "qs"
-import { getUserAgent } from "@helpers/getUserAgent"
+import Config from "react-native-config"
+import { getUserAgent } from "helpers/getUserAgent"
+import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
 
 interface AuthModelState {
   userAccessToken: string | null

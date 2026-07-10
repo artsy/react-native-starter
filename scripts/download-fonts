@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# Fonts are bundled into the app via the `expo-font` config plugin (see app.json),
+# which reads them from `assets/fonts`. With the Expo prebuild workflow there are
+# no committed native folders to copy into, so we drop the fonts in `assets/fonts`
+# and let prebuild wire them up for iOS and Android.
 
 # Get fonts from eigen s3 bucket
 aws s3 cp s3://artsy-citadel/eigen/fonts.tar.gz ./fonts.tar.gz
 
 # Extract fonts to a temporary fonts repo
-mkdir fonts
+mkdir -p fonts
 tar -xvzf fonts.tar.gz -C ./fonts
 
-# Copy iOS fonts to the iOS assets fonts diretory
-cp -R fonts/ios/. ios/Assets/Fonts
-
-# Copy Android fonts to the Android assets fonts diretory
-cp -R fonts/android/. ./android/app/src/main/assets/fonts
+# Copy the fonts into the Expo-managed assets directory
+mkdir -p assets/fonts
+cp -R fonts/ios/. ./assets/fonts
 
 # Cleanup
 rm -rf ./fonts.tar.gz

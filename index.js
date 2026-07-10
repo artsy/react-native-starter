@@ -1,15 +1,10 @@
-/**
- * @format
- */
-
-import { AppRegistry } from "react-native"
-import { App } from "./src/App"
-import { name as appName } from "./app.json"
 import "react-native-gesture-handler"
-import { enableFreeze } from "react-native-screens"
+import "react-native-get-random-values"
 
-// Prevent React component subtrees from rendering.
-// This is still experimental so we can try it out and disable it later if it's unstable
-enableFreeze(true)
+import { registerRootComponent } from "expo"
 
-AppRegistry.registerComponent(appName, () => App)
+import { App } from "./src/App"
+
+// registerRootComponent calls AppRegistry.registerComponent('main', () => App)
+// and sets up the environment appropriately for both Expo Go and native builds.
+registerRootComponent(App)

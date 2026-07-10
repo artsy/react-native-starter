@@ -1,5 +1,4 @@
-import { Flex, Text } from "palette"
-import React from "react"
+import { Flex, Text } from "@artsy/palette-mobile"
 import { graphql, useFragment } from "react-relay"
 import { HomeUser_me$key } from "__generated__/HomeUser_me.graphql"
 
@@ -20,6 +19,7 @@ export const HomeUser: React.FC<HomeUserProps> = (props) => {
   if (!me) {
     return <Text>Failed to make query</Text>
   }
+
   return (
     <Flex>
       <Text>{me.email}</Text>
