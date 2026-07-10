@@ -63,6 +63,11 @@ are generated from `app.json` and the installed native dependencies:
   the native projects.
 - Fonts are bundled through the `expo-font` config plugin, sourced from
   `assets/fonts` (populated by `yarn setup:artsy`).
+- **Local build cache:** `app.json`'s `buildCacheProvider` uses
+  `expo-build-disk-cache`, so `yarn ios` / `yarn android` reuse a previously
+  built binary from disk (`node_modules/.expo-build-disk-cache`) when the native
+  fingerprint is unchanged, skipping a full native rebuild. It's disk-only for
+  now; a remote provider can be added later via the provider's `remotePlugin`.
 
 ## Code Rules & Patterns
 

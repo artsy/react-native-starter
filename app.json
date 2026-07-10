@@ -20,6 +20,12 @@
         "backgroundColor": "#000000"
       }
     },
+    "buildCacheProvider": {
+      "plugin": "expo-build-disk-cache",
+      "options": {
+        "cacheDir": "node_modules/.expo-build-disk-cache"
+      }
+    },
     "plugins": [
       "react-native-keys",
       [
