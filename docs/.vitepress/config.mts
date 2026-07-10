@@ -25,6 +25,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Getting Started", link: "/getting-started" },
       { text: "Configuration", link: "/configuration" },
+      { text: "Feature Flags", link: "/feature-flags" },
       { text: "Architecture", link: "/architecture" },
       { text: "Testing", link: "/testing" },
     ],
@@ -35,6 +36,7 @@ export default defineConfig({
         items: [
           { text: "Getting Started", link: "/getting-started" },
           { text: "Configuration", link: "/configuration" },
+          { text: "Feature Flags", link: "/feature-flags" },
           { text: "Architecture", link: "/architecture" },
           { text: "Testing", link: "/testing" },
         ],

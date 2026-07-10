@@ -6,6 +6,7 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useStoreRehydrated } from "easy-peasy"
+import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
 import { HomeScreen } from "Scenes/Home/Home"
 import { ExampleListScreen } from "Scenes/List/ExampleList"
 import { LoginScreen } from "Scenes/Login/Login"
@@ -57,6 +58,13 @@ const RootStack = createNativeStackNavigator({
       if: useIsLoggedIn,
       screens: {
         Home: HomeTabs,
+        // Developer-only screen for feature-flag overrides. The entry point in
+        // Settings is gated on `__DEV__`, but the route is always registered so
+        // the static param list stays stable.
+        DevMenu: {
+          screen: DevMenuScreen,
+          options: { headerShown: true, title: "Dev Menu" },
+        },
       },
     },
     SignedOut: {

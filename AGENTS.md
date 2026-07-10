@@ -96,6 +96,21 @@ are generated from `app.json` and the installed native dependencies:
 - Read global state with `GlobalStore.useAppState(...)`; dispatch with
   `GlobalStore.actions...`. If you change a store Model's shape, bump the store
   version and add a migration.
+- **Feature flags:** gate work behind a flag declared in
+  `src/system/featureFlags/features.ts` and read it with
+  `useFeatureFlag("yourFlag")` — never call Unleash's `useFlag` directly. Each
+  flag has a compiled-in `readyForRelease` boolean (start `false`; flip to `true`
+  only in the PR that completes the feature) so it can never activate in builds
+  that shipped before it was ready. When enabling a flag in Unleash, add an
+  `appVersion` SEMVER constraint (e.g. `appVersion SEMVER_GTE 3.1.0`) matching the
+  version it landed in — the provider sends `appVersion`/`buildNumber` context for
+  this. In `__DEV__`, override flags locally via **Settings → Dev Menu**. Store
+  changes here (the `devMenu` slice) followed the store-version bump rule above.
+  See [docs/feature-flags.md](./docs/feature-flags.md).
+- **Keep the docs site in sync.** When a change adds, changes, or removes a
+  feature, config, command, or architectural pattern, update the VitePress docs
+  under `docs/` **in the same PR** so the site stays accurate (add a page and
+  register it in `docs/.vitepress/config.mts` if needed).
 
 ## File Organization
 
