@@ -1,0 +1,78 @@
+name: 📱 E2E (agent-device)
+
+on:
+  # Validate the agent-device setup whenever the e2e config changes.
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "e2e/**"
+      - ".github/workflows/agent-device-e2e.yml"
+      - "package.json"
+  # Full device run is manual for now — it needs a built app + simulator.
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Lightweight check: install agent-device and verify the CLI is wired up.
+  # Runs on the default Ubuntu runner — no app build, no simulator.
+  setup-check:
+    name: agent-device setup check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Verify agent-device CLI
+        run: yarn agent-device --version
+
+  # Full e2e run against a built app on a macOS runner (iOS simulator).
+  # Manual only until app builds are wired up in CI.
+  e2e-ios:
+    name: iOS e2e (manual)
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: agent-device doctor
+        run: yarn e2e:doctor
+
+      # TODO: build + install the app on a booted simulator before running checks.
+      #   - yarn prebuild --platform ios
+      #   - <build the iOS app and boot a simulator>
+      #   - <install the .app on the simulator>
+      - name: Run recorded e2e checks
+        run: yarn e2e
+        continue-on-error: true # remove once the app build step above is in place
