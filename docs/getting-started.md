@@ -85,6 +85,46 @@ changed — skipping a full native rebuild. The cache lives on disk only for now
 (a remote provider can be plugged in later via the provider's `remotePlugin`
 option).
 
+### Build performance
+
+Several config-only tweaks (all driven from `app.json` / config plugins, since
+the native folders are generated) speed up native builds:
+
+**Android — Gradle tuning.** The local config plugin
+`plugins/withAndroidBuildPerformance.js` writes performance-oriented
+`gradle.properties`:
+
+- `org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m` — larger daemon
+  heap/metaspace (the default 512m metaspace was OOM-ing our e2e build).
+- `org.gradle.parallel=true`, `org.gradle.caching=true` — parallel modules and
+  the local build cache.
+- `org.gradle.configuration-cache=true` — the biggest incremental win.
+  ⚠️ It can be incompatible with some RN/Expo Gradle plugins; if a build fails
+  with a configuration-cache error, drop that one line in the plugin.
+
+The same plugin also disables the slow per-library `lintVital` analysis on
+release builds (`android { lint { checkReleaseBuilds false } }`).
+
+**Android — single ABI for local dev.** By default all ABIs are built (needed
+for release/CI). For a much faster local compile (~4x), build a single
+architecture by exporting `RN_DEV_SINGLE_ABI` before `yarn android`:
+
+```sh
+export RN_DEV_SINGLE_ABI=arm64-v8a   # physical device
+# or
+export RN_DEV_SINGLE_ABI=x86_64      # emulator
+yarn android
+```
+
+Leave it unset for release/CI builds so all ABIs ship.
+
+**iOS — prebuilt React Native.** `expo-build-properties` sets
+`ios.buildReactNativeFromSource: false`, so pod install consumes the prebuilt
+RNCore + Hermes XCFrameworks (`RCT_USE_PREBUILT_RNCORE=1`) instead of compiling
+React Native from source — a large iOS build speedup. If you ever hit a build
+error tied to precompiled RN (e.g. when combined with `useFrameworks: static`),
+set it back to `true` to build RN from source.
+
 ## Common commands
 
 ```sh
