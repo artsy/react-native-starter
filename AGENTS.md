@@ -106,6 +106,10 @@ are generated from `app.json` and the installed native dependencies:
   version it landed in — the provider sends `appVersion`/`buildNumber` context for
   this. In `__DEV__`, override flags locally via **Settings → Dev Menu**. Store
   changes here (the `devMenu` slice) followed the store-version bump rule above.
+  For A/B experiments, read a variant with `useFeatureVariant("yourFlag")`
+  (Unleash variants) instead of `useVariant` directly — it applies the same
+  `readyForRelease` gate (returns the control branch until ready), stays sticky
+  via the provider's `sessionId`, and logs a one-time exposure breadcrumb.
   See [docs/feature-flags.md](./docs/feature-flags.md).
 - **Keep the docs site in sync.** When a change adds, changes, or removes a
   feature, config, command, or architectural pattern, update the VitePress docs

@@ -16,6 +16,9 @@ effective = devOverride ?? (readyForRelease && remoteUnleashFlag)
 | `remoteUnleashFlag` | Unleash server (keyed by `unleashFlagKey`)       | Server-side rollout, gated by an `appVersion` constraint.           |
 | `devOverride`       | Dev Menu (local, `__DEV__` only)                 | Force a flag On/Off on your device.                                 |
 
+For A/B experiments layered on top of the same registry, see
+[A/B testing (variants)](#a-b-testing-variants).
+
 ## The registry
 
 Every flag is declared in `src/system/featureFlags/features.ts`:
@@ -85,8 +88,81 @@ In `__DEV__` builds, open **Settings → Dev Menu** to force any flag with
 the global store (`devMenu.featureFlagOverrides`) and are ignored entirely in
 release builds. "Reset all overrides" clears them.
 
-## A/B variants
+## A/B testing (variants)
 
-Variants are **not** implemented yet, but the Unleash context already carries a
-sticky `sessionId`, so they can be layered on later without reworking the
-registry or the provider.
+On top of the on/off flag above, an **experiment layer** answers "which branch
+is this user in?" via Unleash [variants]. Read it with the `useFeatureVariant`
+hook, which reuses the same flag registry and the exact same safety gates as
+`useFeatureFlag`.
+
+```tsx
+import { useFeatureVariant } from "system/featureFlags/useFeatureVariant"
+
+const MyComponent = () => {
+  const { enabled, variant, payload } = useFeatureVariant("exampleNewFeature")
+
+  if (!enabled) return <Control /> // control / not-ready / unconfigured
+  return variant === "b" ? <TreatmentB payload={payload} /> : <TreatmentA />
+}
+```
+
+The hook returns:
+
+| Field     | Type      | Meaning                                                                 |
+| --------- | --------- | ----------------------------------------------------------------------- |
+| `enabled` | `boolean` | `true` only for an ACTIVE (non-control) branch.                         |
+| `variant` | `string`  | The variant name (e.g. `"a"`, `"b"`); `"control"` when not enabled.     |
+| `payload` | `unknown` | The parsed variant payload, if any (`json` → object, `number` → number). |
+
+### readyForRelease gate
+
+Experiments obey the **same build-time gate** as flags:
+
+```
+effective = devOverride ?? (readyForRelease && remoteUnleashVariant)
+```
+
+While a feature's `readyForRelease` is `false`, `useFeatureVariant` returns the
+**control** result no matter what the Unleash server sends — an experiment branch
+can never render in a build that shipped before the experiment was ready. Pair
+the Unleash flag with an `appVersion SEMVER_GTE <version>` strategy constraint as
+belt-and-suspenders on the server side (the provider sends `appVersion` /
+`buildNumber` context; see [above](#setting-a-feature-ready)).
+
+Because the Dev Menu override is a simple boolean, in `__DEV__` it can only force
+the experiment On or Off — a forced-on override reports `enabled: true` while
+still returning the `"control"` variant name (a per-variant Dev Menu picker would
+be a follow-up).
+
+### Stickiness
+
+Variant assignment is **sticky per install**: `FeatureFlagProvider` sends a
+persisted, anonymous `sessionId` in the Unleash context, so a given device keeps
+landing in the same branch across launches and rollout percentage changes.
+
+### Exposure logging
+
+When a user is exposed to an **enabled** variant, the hook logs once via
+`logger.info("experiment exposure", { flag, variant })` (a Sentry breadcrumb) so
+the experiment is measurable. A module-level dedupe set keyed by `flag:variant`
+ensures re-renders don't spam it — its lifetime is the JS runtime, i.e. one app
+session. A production app would also forward this exposure to its analytics /
+experimentation pipeline from the same seam.
+
+Safe when Unleash is unconfigured (the default template state): `useVariant`
+resolves to the disabled variant instead of throwing, which the hook maps to the
+control result, and nothing is logged.
+
+### Setting up a variant in Unleash
+
+1. Add (or reuse) a flag entry in `features.ts` and read it with
+   `useFeatureVariant("yourFlag")`. Flip `readyForRelease: true` in the finishing
+   PR, exactly as for a plain flag.
+2. In Unleash, on that flag's activation strategy add **variants** (e.g. `a` and
+   `b`) with weights that sum to 100%, and attach a payload if a branch needs
+   data. Set the stickiness to the `sessionId` context field so assignment stays
+   consistent per install.
+3. Add an `appVersion SEMVER_GTE <version>` constraint matching the version the
+   experiment landed in.
+
+[variants]: https://docs.getunleash.io/reference/feature-toggle-variants

@@ -35,6 +35,9 @@ jest.mock("react-native-keys", () => ({
 jest.mock("@unleash/proxy-client-react", () => ({
   FlagProvider: ({ children }: { children: unknown }) => children,
   useFlag: () => false,
+  // Mirrors Unleash's unconfigured/disabled variant so `useFeatureVariant` is
+  // safe by default in tests (individual tests override this mock as needed).
+  useVariant: () => ({ name: "disabled", enabled: false }),
   useFlagsStatus: () => ({ flagsReady: true, flagsError: null }),
 }))
 
