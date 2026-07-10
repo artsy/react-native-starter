@@ -7,18 +7,14 @@
 // prebuild/CNG workflow throws away). It does three things:
 //
 //   1. Tunes `gradle.properties` for faster builds (JVM heap/metaspace,
-//      parallel execution, build cache, configuration cache).
+//      parallel execution, build cache). Configuration cache is opt-in via
+//      RN_GRADLE_CONFIG_CACHE=true (see below).
 //   2. Optionally restricts the build to a single ABI for local dev, gated
 //      behind the `RN_DEV_SINGLE_ABI` env var so CI/release keep all ABIs.
 //   3. Disables the slow per-library `lintVital` analysis in release builds.
 //
 // Registered in app.json's `plugins` array as
 // "./plugins/withAndroidBuildPerformance.js".
-//
-// ⚠️  Configuration-cache caveat: `org.gradle.configuration-cache=true` is the
-// biggest incremental win but can be incompatible with some React Native /
-// Expo Gradle plugins. If a build fails with a configuration-cache error, drop
-// (or set to false) the single `org.gradle.configuration-cache` line below.
 
 const { withGradleProperties, withAppBuildGradle } = require("expo/config-plugins")
 
@@ -32,9 +28,6 @@ const GRADLE_PROPERTIES = {
   "org.gradle.parallel": "true",
   // Reuse task outputs across builds (local Gradle build cache).
   "org.gradle.caching": "true",
-  // Configuration cache — biggest incremental win. See caveat in the header:
-  // if a build fails with a configuration-cache error, drop this one line.
-  "org.gradle.configuration-cache": "true",
 }
 
 function setGradleProperty(modResults, key, value) {
@@ -64,6 +57,14 @@ const withGradlePropertiesTuning = (config) =>
     const singleAbi = process.env.RN_DEV_SINGLE_ABI
     if (singleAbi) {
       setGradleProperty(cfg.modResults, "reactNativeArchitectures", singleAbi)
+    }
+
+    // Configuration cache is the biggest incremental win but can be
+    // incompatible with some React Native / Expo Gradle plugins, so it is
+    // OPT-IN to keep the default build reliable out of the box. Enable it with
+    // RN_GRADLE_CONFIG_CACHE=true once you've confirmed your plugins support it.
+    if (process.env.RN_GRADLE_CONFIG_CACHE === "true") {
+      setGradleProperty(cfg.modResults, "org.gradle.configuration-cache", "true")
     }
 
     return cfg
