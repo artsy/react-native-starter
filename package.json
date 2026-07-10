@@ -64,7 +64,7 @@
     "react-native-gesture-handler": "~2.31.1",
     "react-native-get-random-values": "~1.11.0",
     "react-native-haptic-feedback": "^1.14.0",
-    "react-native-keys": "0.7.13",
+    "react-native-keys": "patch:react-native-keys@npm%3A0.7.13#~/.yarn/patches/react-native-keys-npm-0.7.13-00e9deb63c.patch",
     "react-native-linear-gradient": "2.8.3",
     "react-native-pager-view": "8.0.1",
     "react-native-reanimated": "4.3.1",
