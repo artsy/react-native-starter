@@ -5,6 +5,26 @@
 The native `ios/` and `android/` folders are **not** committed — they are
 generated on demand from `app.json` and the installed native dependencies.
 
+## Start a new project from this template
+
+This repo is a **GitHub template**. To kickstart your own app:
+
+1. **Get a copy** — click **“Use this template” → Create a new repository** on
+   GitHub for a clean-history copy. Without GitHub you can also
+   `npx degit artsy/react-native-starter my-app`, or fork/clone.
+2. **Rebrand** — in `app.json`, set your app `name`, `slug`, iOS
+   `bundleIdentifier`, Android `package`, and icons/splash. Never hand-edit the
+   generated native folders — they're regenerated on every prebuild.
+3. **Point at your backend** — the template wires Relay to Artsy's GraphQL
+   (metaphysics). Swap `data/schema.graphql` for your own API (update the URL in
+   the `sync-schema` script, then `yarn sync-schema`) and replace the sample
+   `Login`/example screens under `src/Scenes/`.
+4. Then follow **Install → Configure keys → Generate the native projects → Run**
+   below.
+
+> Outside Artsy, skip `yarn setup:artsy` (it fetches Artsy-private fonts + env) and
+> provide your own fonts in `assets/fonts` and env/keys instead.
+
 ## Prerequisites
 
 The pinned toolchain lives in `.tool-versions` (and `.nvmrc`):
