@@ -83,7 +83,16 @@ until [ "$(adb shell getprop init.svc.bootanim 2>/dev/null | tr -d '[:space:]')"
   fi
   sleep 2
 done
-sleep 10
+# Suppress system ANR/crash dialogs. Under CI emulator load the Pixel launcher
+# itself sometimes ANRs right as the app cold-starts; its "Application Not
+# Responding" dialog steals window focus, so agent-device sees
+# com.google.android.apps.nexuslauncher (not net.artsy.energy) as the foreground
+# window and `wait` fails — even though our MainActivity is the resumed/top
+# activity. Hiding error dialogs stops them from grabbing focus.
+adb shell settings put global hide_error_dialogs 1 || true
+# Extra settle so the launcher finishes initializing before we cold-start the
+# app (reduces the launcher-ANR window).
+sleep 25
 echo "Device settled; starting e2e."
 
 attempts=3

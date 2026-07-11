@@ -237,6 +237,13 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          # More cores/RAM so the launcher doesn't ANR under load while the app
+          # cold-starts (see e2e/scripts/android-e2e.sh for the focus-stealing
+          # ANR this avoids). disable-animations belt-and-suspenders with the
+          # script's settings writes.
+          cores: 3
+          ram-size: 4096M
+          disable-animations: true
           script: bash e2e/scripts/android-e2e.sh
 
       # Upload the debug evidence the script collects (per-attempt screenshot,
