@@ -5,9 +5,14 @@
 # recording via `yarn e2e:record` once you have a booted device with the app.
 #
 # It opens the app on a booted simulator/emulator and asserts that the Login
-# screen renders on first launch (see src/Scenes/Login/Login.tsx).
+# screen renders on first launch (see src/Scenes/Login/Login.tsx, which shows
+# both the "Folio" title and the "Log In" heading).
+#
+# NOTE: the `is` command takes a predicate plus a *selector expression*, e.g.
+# `is visible text="Folio"`. A bare quoted string (`is visible "Folio"`) is
+# rejected with "is requires a selector expression".
 
 open Energy
 wait "Log In"
-is visible "Folio"
+is visible text="Folio"
 close
