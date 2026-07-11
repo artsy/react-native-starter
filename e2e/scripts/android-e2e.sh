@@ -6,9 +6,10 @@
 # instead of the app, so step 2 of the smoke check times out).
 #
 # Runs the suite with `--debug` (verbose CLI/daemon diagnostics) and
-# `--record-video` + `--artifacts-dir`, and captures a device screenshot, the
-# current foreground window/activity, and recent logcat on every attempt (pass
-# or fail) so a run can be inspected after the fact. All evidence lands under
+# `--record-video` + `--artifacts-dir`, and captures a device screenshot, an
+# accessibility snapshot, the current foreground window/activity, and recent
+# logcat on every attempt (pass or fail) so a run can be inspected after the
+# fact. All evidence lands under
 # $E2E_ARTIFACTS_DIR (default: e2e-artifacts/) which CI uploads as an artifact.
 #
 # IMPORTANT: this MUST live in a standalone script, NOT inline in the workflow's
@@ -25,8 +26,9 @@ APP_ID="net.artsy.energy"
 ART="${E2E_ARTIFACTS_DIR:-e2e-artifacts}"
 mkdir -p "$ART"
 
-# capture_evidence <label> — dump a screenshot, the foreground window/activity,
-# and recent logcat into $ART/<label>/. Best-effort: never fails the run.
+# capture_evidence <label> — dump a screenshot, an agent-device accessibility
+# snapshot, the foreground window/activity, and recent logcat into $ART/<label>/.
+# Best-effort: never fails the run.
 capture_evidence() {
   label="$1"
   dir="$ART/$label"
@@ -34,6 +36,14 @@ capture_evidence() {
   echo "Capturing device evidence -> $dir"
   adb exec-out screencap -p > "$dir/screen.png" 2>"$dir/screencap.err" \
     || echo "screencap failed (see screencap.err)"
+  # Accessibility snapshot of whatever is on screen right now. `--platform
+  # android` lets it attach to the foreground app without the (now closed)
+  # test session; captured before the force-stop below so it reflects the
+  # failed state. Structured (--json) + human-readable text side by side.
+  yarn agent-device snapshot --platform android --json --timeout 20000 \
+    > "$dir/snapshot.json" 2>"$dir/snapshot.err" || echo "snapshot (json) failed (see snapshot.err)"
+  yarn agent-device snapshot --platform android --timeout 20000 \
+    > "$dir/snapshot.txt" 2>>"$dir/snapshot.err" || echo "snapshot (text) failed (see snapshot.err)"
   {
     echo "== dumpsys window (focus) =="
     adb shell dumpsys window 2>/dev/null | grep -E 'mCurrentFocus|mFocusedApp' || true
