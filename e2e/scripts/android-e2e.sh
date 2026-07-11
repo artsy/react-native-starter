@@ -53,6 +53,15 @@ capture_evidence() {
       | grep -E 'mResumedActivity|topResumedActivity|ResumedActivity' || true
   } > "$dir/foreground.txt" 2>&1 || true
   adb logcat -d -v time -t 2000 > "$dir/logcat.txt" 2>&1 || true
+  # Echo the textual evidence into the CI log too. The uploaded artifact lives
+  # on Azure blob storage, which some egress policies block, so surfacing the
+  # foreground + snapshot inline keeps a run diagnosable straight from the logs
+  # (the screenshot PNG + recording.mp4 remain in the downloadable artifact).
+  echo "----- $label: foreground -----"
+  cat "$dir/foreground.txt" 2>/dev/null || true
+  echo "----- $label: accessibility snapshot (first 60 lines) -----"
+  head -n 60 "$dir/snapshot.txt" 2>/dev/null || true
+  echo "----- end $label evidence (screenshot: $dir/screen.png) -----"
 }
 
 echo "Installing $APK"

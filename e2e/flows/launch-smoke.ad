@@ -12,13 +12,18 @@
 # `is visible text="Folio"`. A bare quoted string (`is visible "Folio"`) is
 # rejected with "is requires a selector expression".
 
-# `--relaunch` forces a real cold launch by package (a plain `open` can leave
-# the home launcher foreground on a freshly-booted emulator), and
-# `wait --connected` blocks until the app is actually foreground/connected
-# before we assert on its UI — without it, `wait "Log In"` can fail fast with
-# "nexuslauncher is foreground instead of net.artsy.energy".
+# `--relaunch` forces a real cold launch by package — a plain `open` can leave
+# the home launcher foreground on a freshly-booted emulator ("nexuslauncher is
+# foreground instead of net.artsy.energy"); the relaunch cold-starts the app so
+# it reliably comes to the foreground.
+#
+# NOTE: do NOT add `wait --connected` here. In a `.ad` replay, `wait <arg>`
+# treats its argument as on-screen text to wait for, so `wait --connected` is
+# interpreted as "wait for the literal text --connected" and times out. The
+# `--connected` flag only exists on the standalone `wait` CLI command. The
+# `wait "Log In"` below already blocks until the app has rendered its first
+# screen, which is all the smoke check needs.
 open Energy --relaunch
-wait --connected
 wait "Log In"
 is visible text="Folio"
 close
