@@ -69,10 +69,42 @@ Run it locally with `yarn e2e:impact` (`sniffler impact --base origin/main
 - **E2E impact (Sniffler)** (`.github/workflows/e2e-impact.yml`) runs on every PR.
   It is **informational and never blocks**: if Sniffler errors or can't resolve
   the graph it **fails open** (reports "run the full suite") and still exits 0.
-- **E2E (agent-device)** (`.github/workflows/agent-device-e2e.yml`) validates the
-  agent-device setup (install + `--version`) on any change under `e2e/**`, and
-  provides **manual** (`workflow_dispatch`) iOS and Android jobs that build the
-  app on a runner and run the checks. Each device job re-runs Sniffler to set
-  `$E2E_FLOWS` — running only the impacted flows, or the full `e2e/flows` suite
-  when there's no partial impact. Building/installing the iOS app in CI is left
-  as a TODO until app builds are wired up.
+- **E2E (agent-device)** (`.github/workflows/agent-device-e2e.yml`) has three jobs:
+  - **agent-device setup check** — runs on any change under `e2e/**`; installs
+    deps and verifies the CLI (`agent-device --version`). Lightweight, no build.
+  - **Android e2e (manual)** — a `workflow_dispatch` job that runs the flows
+    against a **real Android emulator** (`reactivecircus/android-emulator-runner`),
+    and is validated end-to-end: `expo prebuild` → `yarn relay` → build a
+    **release** APK (a debug build boots the expo-dev-client launcher, not the
+    app) → boot the emulator → install → run the flows. It re-runs Sniffler to
+    set `$E2E_FLOWS` (impacted flows, or the full `e2e/flows` suite). The
+    install + run logic lives in **`e2e/scripts/android-e2e.sh`** (see
+    _Debugging CI runs_ below).
+  - **iOS e2e** — currently **disabled** (commented out in the workflow). The
+    previous version only ran `agent-device doctor` + `test` with no build or
+    booted simulator, so it reported green while validating nothing. The
+    workflow keeps a step-by-step guide for wiring up a real macOS build +
+    simulator flow that mirrors the Android job.
+
+### Debugging CI runs
+
+`e2e/scripts/android-e2e.sh` runs the suite with `--debug` (verbose CLI/daemon
+diagnostics) and, on **every attempt** (pass or fail), captures evidence into
+`e2e-artifacts/` — a device **screenshot**, an **accessibility snapshot**
+(`snapshot.json`/`.txt`), the **foreground** window/activity (`foreground.txt`),
+and recent **logcat**. It also records a per-attempt **video** (`--record-video`).
+All of this is uploaded by the **Upload agent-device e2e artifacts** step
+(`actions/upload-artifact`, `if: always()`) as `agent-device-e2e-artifacts`, so a
+run can be inspected from the Actions tab whether it passed or failed. The
+foreground + snapshot are also echoed into the job log for quick diagnosis.
+
+The script also hardens against a CI-only flake: on a freshly-booted emulator the
+home launcher can ANR and steal window focus right as the app cold-starts, so it
+waits for the boot animation to finish, sets `hide_error_dialogs`, cold-launches
+with `open Energy --relaunch`, and retries.
+
+> **`.ad` DSL gotchas** (learned the hard way): in a replay, `is` takes a
+> predicate **plus a selector**, e.g. `is visible text="Folio"` (a bare
+> `is visible "Folio"` is rejected). And `wait <arg>` waits for on-screen
+> **text** — `wait --connected` is treated as the literal text `--connected`, not
+> a flag (that flag only exists on the standalone `wait` CLI command).
