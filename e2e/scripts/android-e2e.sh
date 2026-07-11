@@ -20,6 +20,25 @@ APP_ID="net.artsy.energy"
 echo "Installing $APK"
 adb install -r "$APK"
 
+# The emulator-runner returns as soon as `sys.boot_completed=1`, which fires
+# while the system is still settling — the home launcher and PackageManager
+# aren't fully ready, and a launch intent issued this early can be dropped
+# (the app never comes to foreground). Wait for the boot animation to stop and
+# give the launcher a few more seconds before the first attempt.
+echo "Waiting for the device to finish settling after boot..."
+adb wait-for-device
+boot_wait=0
+until [ "$(adb shell getprop init.svc.bootanim 2>/dev/null | tr -d '[:space:]')" = "stopped" ]; do
+  boot_wait=$((boot_wait + 2))
+  if [ "$boot_wait" -ge 60 ]; then
+    echo "bootanim still not stopped after ${boot_wait}s; proceeding anyway"
+    break
+  fi
+  sleep 2
+done
+sleep 10
+echo "Device settled; starting e2e."
+
 attempts=3
 n=0
 until [ "$n" -ge "$attempts" ]; do

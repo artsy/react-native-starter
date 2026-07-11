@@ -12,7 +12,13 @@
 # `is visible text="Folio"`. A bare quoted string (`is visible "Folio"`) is
 # rejected with "is requires a selector expression".
 
-open Energy
+# `--relaunch` forces a real cold launch by package (a plain `open` can leave
+# the home launcher foreground on a freshly-booted emulator), and
+# `wait --connected` blocks until the app is actually foreground/connected
+# before we assert on its UI — without it, `wait "Log In"` can fail fast with
+# "nexuslauncher is foreground instead of net.artsy.energy".
+open Energy --relaunch
+wait --connected
 wait "Log In"
 is visible text="Folio"
 close
