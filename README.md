@@ -8,6 +8,25 @@ Don't know what Artsy is? Check out [this overview](https://github.com/artsy/met
 
 Want to know more about Eigen: our Artsy Mobile? Check it out [here](https://github.com/artsy), read the [mobile](http://artsy.github.io/blog/categories/mobile/) blog posts, or [eigen's](http://artsy.github.io/blog/categories/eigen/) specifically.
 
+### Start a new project from this template
+
+This repo is a **GitHub template**, so you can spin up your own app from it:
+
+1. **Get a copy** — click **“Use this template” → Create a new repository** (clean
+   history). Or without GitHub: `npx degit artsy/react-native-starter my-app`, or
+   fork/clone.
+2. **Install & add keys** — `yarn install`, then `cp keys.example.json keys.json`
+   and fill in your own values (real `keys*.json` are gitignored). Artsy engineers
+   run `yarn setup:artsy` for fonts + env; outside Artsy, supply your own fonts/env.
+3. **Rebrand** — edit `app.json` (`name`, `slug`, iOS `bundleIdentifier`, Android
+   `package`, icons/splash). Don't hand-edit the generated `ios/`/`android/` folders.
+4. **Point at your backend** — swap `data/schema.graphql` for your GraphQL API
+   (`yarn sync-schema`) and replace the sample screens in `src/Scenes/`.
+5. **Generate native projects & run** — `yarn prebuild`, then `yarn ios` / `yarn android`.
+
+See the [Getting Started guide](https://artsy.github.io/react-native-starter/getting-started)
+for details.
+
 ### Getting Started
 
 This project uses **Expo** with the **prebuild** (CNG) workflow. The native
