@@ -45,6 +45,19 @@ Instructions coming later
 - Functional **Login** screen already available
 - ESLint + Prettier, and Jest via **jest-expo** / `@testing-library/react-native`
 
+## Documentation
+
+📖 **[artsy.github.io/react-native-starter](https://artsy.github.io/react-native-starter/)** — full docs (VitePress).
+
+- [Getting Started](https://artsy.github.io/react-native-starter/getting-started)
+- [Configuration](https://artsy.github.io/react-native-starter/configuration)
+- [Feature Flags](https://artsy.github.io/react-native-starter/feature-flags)
+- [Architecture](https://artsy.github.io/react-native-starter/architecture)
+- [Testing](https://artsy.github.io/react-native-starter/testing) · [E2E Testing](https://artsy.github.io/react-native-starter/e2e-testing)
+
+The site is built from `docs/` and deployed to GitHub Pages on every push to
+`main` (`yarn docs:dev` to preview locally).
+
 ## Common Commands
 
 ```sh
