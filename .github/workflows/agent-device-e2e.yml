@@ -238,3 +238,19 @@ jobs:
           arch: x86_64
           profile: pixel_6
           script: bash e2e/scripts/android-e2e.sh
+
+      # Upload the debug evidence the script collects (per-attempt screenshot,
+      # foreground window/activity dump, logcat) plus agent-device's own
+      # artifacts (verbose replay logs + recording.mp4). `if: always()` so we
+      # get the evidence whether the e2e passed or failed — this is what lets
+      # you actually see what was on screen when a launch flakes.
+      - name: Upload agent-device e2e artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-device-e2e-artifacts
+          path: |
+            e2e-artifacts/**
+            .agent-device/test-artifacts/**
+          if-no-files-found: warn
+          retention-days: 14

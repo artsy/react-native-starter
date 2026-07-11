@@ -5,6 +5,12 @@
 # app-launch flake (sometimes the home launcher stays foreground after install
 # instead of the app, so step 2 of the smoke check times out).
 #
+# Runs the suite with `--debug` (verbose CLI/daemon diagnostics) and
+# `--record-video` + `--artifacts-dir`, and captures a device screenshot, the
+# current foreground window/activity, and recent logcat on every attempt (pass
+# or fail) so a run can be inspected after the fact. All evidence lands under
+# $E2E_ARTIFACTS_DIR (default: e2e-artifacts/) which CI uploads as an artifact.
+#
 # IMPORTANT: this MUST live in a standalone script, NOT inline in the workflow's
 # `script:` block. reactivecircus/android-emulator-runner executes that input
 # line-by-line, each line in its own `sh -c`, so a multi-line `until … done`
@@ -16,6 +22,28 @@ set -euo pipefail
 APK="android/app/build/outputs/apk/release/app-release.apk"
 FLOWS="${E2E_FLOWS:-e2e/flows}"
 APP_ID="net.artsy.energy"
+ART="${E2E_ARTIFACTS_DIR:-e2e-artifacts}"
+mkdir -p "$ART"
+
+# capture_evidence <label> — dump a screenshot, the foreground window/activity,
+# and recent logcat into $ART/<label>/. Best-effort: never fails the run.
+capture_evidence() {
+  label="$1"
+  dir="$ART/$label"
+  mkdir -p "$dir"
+  echo "Capturing device evidence -> $dir"
+  adb exec-out screencap -p > "$dir/screen.png" 2>"$dir/screencap.err" \
+    || echo "screencap failed (see screencap.err)"
+  {
+    echo "== dumpsys window (focus) =="
+    adb shell dumpsys window 2>/dev/null | grep -E 'mCurrentFocus|mFocusedApp' || true
+    echo
+    echo "== dumpsys activity (resumed) =="
+    adb shell dumpsys activity activities 2>/dev/null \
+      | grep -E 'mResumedActivity|topResumedActivity|ResumedActivity' || true
+  } > "$dir/foreground.txt" 2>&1 || true
+  adb logcat -d -v time -t 2000 > "$dir/logcat.txt" 2>&1 || true
+}
 
 echo "Installing $APK"
 adb install -r "$APK"
@@ -44,14 +72,18 @@ n=0
 until [ "$n" -ge "$attempts" ]; do
   n=$((n + 1))
   echo "::group::agent-device e2e attempt $n/$attempts"
+  # --debug: verbose CLI/daemon diagnostics. --record-video + --artifacts-dir:
+  # persist a per-attempt recording.mp4 and replay logs under $ART/agent-device.
   # shellcheck disable=SC2086 # $FLOWS is an intentionally word-split flow list
-  if yarn agent-device test $FLOWS; then
+  if yarn agent-device test $FLOWS --debug --record-video --artifacts-dir "$ART/agent-device"; then
     echo "::endgroup::"
     echo "agent-device e2e passed on attempt $n"
+    capture_evidence "pass"
     exit 0
   fi
   echo "::endgroup::"
-  echo "attempt $n failed; force-stopping the app and retrying"
+  echo "attempt $n failed; capturing evidence, force-stopping the app and retrying"
+  capture_evidence "attempt-${n}-failure"
   adb shell am force-stop "$APP_ID" || true
   sleep 5
 done
