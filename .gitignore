@@ -107,3 +107,7 @@ web-build/
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+
+
+# Fonts
+fonts.tar.gz

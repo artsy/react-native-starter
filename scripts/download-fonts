@@ -7,7 +7,7 @@ set -euxo pipefail
 # and let prebuild wire them up for iOS and Android.
 
 # Get fonts from eigen s3 bucket
-aws s3 cp s3://artsy-citadel/eigen/fonts.tar.gz ./fonts.tar.gz
+aws s3 cp s3://artsy-citadel/rnstarter/fonts.tar.gz ./fonts.tar.gz
 
 # Extract fonts to a temporary fonts repo
 mkdir -p fonts
