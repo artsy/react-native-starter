@@ -1,11 +1,11 @@
-import { GridIcon, HomeIcon, SettingsIcon } from "@artsy/icons/native"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { createNativeBottomTabNavigator } from "@react-navigation/bottom-tabs/unstable"
 import {
   createStaticNavigation,
   StaticParamList,
 } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { useStoreRehydrated } from "easy-peasy"
+import { Platform } from "react-native"
 
 import { DevMenuScreen } from "Scenes/DevMenu/DevMenu"
 import { HomeScreen } from "Scenes/Home/Home"
@@ -19,31 +19,56 @@ const useIsLoggedIn = () =>
   !!GlobalStore.useAppState((store) => store.auth.userAccessToken)
 const useIsLoggedOut = () => !useIsLoggedIn()
 
-// Tab icons come from @artsy/icons (native entrypoint). Each icon takes a
-// `fill` prop that accepts a palette color token or a raw color, so the
-// `color` React Navigation passes for the active/inactive state works directly.
-const HomeTabs = createBottomTabNavigator({
-  screenOptions: { headerShown: false },
+// Native bottom tabs render a real UITabBarController, so on iOS 26 the system
+// draws the "Liquid Glass" floating tab bar (and falls back to the classic
+// native bar on older OS versions). Native tabs can't render React-component
+// icons, so tab icons are native descriptors: SF Symbols on iOS and PNG image
+// sources on Android (rasterized from @artsy/icons in src/assets/images/tabs).
+const HomeTabs = createNativeBottomTabNavigator({
+  screenOptions: {
+    headerShown: false,
+    // Minimize the Liquid Glass bar as the user scrolls down (iOS 26+; a no-op
+    // on older OS versions).
+    tabBarMinimizeBehavior: "onScrollDown",
+  },
   screens: {
     Home: {
       screen: HomeScreen,
       options: {
         title: "Home",
-        tabBarIcon: ({ color }) => <HomeIcon fill={color} />,
+        tabBarIcon: Platform.select({
+          ios: { type: "sfSymbol", name: "house" } as const,
+          android: {
+            type: "image",
+            source: require("assets/images/tabs/home.png"),
+          } as const,
+        }),
       },
     },
     List: {
       screen: ExampleListScreen,
       options: {
         title: "List",
-        tabBarIcon: ({ color }) => <GridIcon fill={color} />,
+        tabBarIcon: Platform.select({
+          ios: { type: "sfSymbol", name: "square.grid.2x2" } as const,
+          android: {
+            type: "image",
+            source: require("assets/images/tabs/grid.png"),
+          } as const,
+        }),
       },
     },
     Settings: {
       screen: SettingsScreen,
       options: {
         title: "Settings",
-        tabBarIcon: ({ color }) => <SettingsIcon fill={color} />,
+        tabBarIcon: Platform.select({
+          ios: { type: "sfSymbol", name: "gearshape" } as const,
+          android: {
+            type: "image",
+            source: require("assets/images/tabs/settings.png"),
+          } as const,
+        }),
       },
     },
   },
