@@ -1,20 +1,20 @@
 {
-  "name": "Energy",
-  "displayName": "Energy",
+  "name": "rnstarter",
+  "displayName": "rnstarter",
   "expo": {
-    "name": "Energy",
+    "name": "rnstarter",
     "slug": "react-native-starter",
-    "scheme": "energy",
+    "scheme": "rnstarter",
     "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "net.artsy.energy",
+      "bundleIdentifier": "net.artsy.rnstarter",
       "config": {
         "usesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "net.artsy.energy",
+      "package": "net.artsy.rnstarter",
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/short-white-logo.png",
         "backgroundColor": "#000000"

@@ -9,9 +9,10 @@
 #      prebuild` / the expo-font plugin resolve them. They are empty stand-ins —
 #      the real fonts are Artsy-private, so the app falls back to system fonts.
 #      Drop real .otf files in assets/fonts to use your own typefaces.
-#   2. Creates keys.json from keys.example.json if you don't have one yet
-#      (react-native-keys reads secrets from keys.json; real keys*.json are
-#      gitignored).
+#   2. Creates the per-environment react-native-keys files
+#      (keys.development.json for debug builds, keys.production.json for release)
+#      from keys.example.json if you don't have them yet. react-native-keys reads
+#      keys.<env>.json, not keys.json; real keys*.json are gitignored.
 #
 # Run via: yarn setup:oss
 set -euo pipefail
@@ -39,13 +40,16 @@ for f in "${FONTS[@]}"; do
   fi
 done
 
-echo "▸ keys.json (react-native-keys)"
-if [ -f keys.json ]; then
-  echo "  • keys.json already exists — leaving it as-is"
-else
-  cp keys.example.json keys.json
-  echo "  • created keys.json from keys.example.json — fill in your own values"
-fi
+echo "▸ react-native-keys env files (keys.development.json / keys.production.json)"
+for env in development production; do
+  target="keys.${env}.json"
+  if [ -f "$target" ]; then
+    echo "  • keeping existing $target"
+  else
+    cp keys.example.json "$target"
+    echo "  • created $target from keys.example.json — fill in your own values"
+  fi
+done
 
 cat <<'EOF'
 
@@ -58,5 +62,9 @@ cat <<'EOF'
 Notes:
  • Fonts are empty placeholders, so text renders in the system font. Replace the
    files in assets/fonts with your own .otf files to change that.
- • keys.json holds secrets and is gitignored — fill in real values as needed.
+ • keys.<env>.json hold secrets and are gitignored — fill in real values as needed.
+ • If you switched app.json config (bundle id, icons, package), run a CLEAN
+   prebuild so native resources regenerate: yarn prebuild (or yarn android:clean
+   / yarn ios:clean). A stale ios/ or android/ folder causes errors like
+   "resource color/iconBackground not found".
 EOF

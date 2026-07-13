@@ -22,7 +22,7 @@ set -euo pipefail
 
 APK="android/app/build/outputs/apk/release/app-release.apk"
 FLOWS="${E2E_FLOWS:-e2e/flows}"
-APP_ID="net.artsy.energy"
+APP_ID="net.artsy.rnstarter"
 ART="${E2E_ARTIFACTS_DIR:-e2e-artifacts}"
 mkdir -p "$ART"
 
@@ -86,7 +86,7 @@ done
 # Suppress system ANR/crash dialogs. Under CI emulator load the Pixel launcher
 # itself sometimes ANRs right as the app cold-starts; its "Application Not
 # Responding" dialog steals window focus, so agent-device sees
-# com.google.android.apps.nexuslauncher (not net.artsy.energy) as the foreground
+# com.google.android.apps.nexuslauncher (not net.artsy.rnstarter) as the foreground
 # window and `wait` fails — even though our MainActivity is the resumed/top
 # activity. Hiding error dialogs stops them from grabbing focus.
 adb shell settings put global hide_error_dialogs 1 || true

@@ -101,7 +101,7 @@ foreground + snapshot are also echoed into the job log for quick diagnosis.
 The script also hardens against a CI-only flake: on a freshly-booted emulator the
 home launcher can ANR and steal window focus right as the app cold-starts, so it
 waits for the boot animation to finish, sets `hide_error_dialogs`, cold-launches
-with `open Energy --relaunch`, and retries.
+with `open rnstarter --relaunch`, and retries.
 
 > **`.ad` DSL gotchas** (learned the hard way): in a replay, `is` takes a
 > predicate **plus a selector**, e.g. `is visible text="Folio"` (a bare
