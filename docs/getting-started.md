@@ -79,16 +79,19 @@ gitignored.
 
 ## Configure keys
 
-The app reads secrets through [`react-native-keys`](https://github.com/numandev1/react-native-keys).
-Create a real `keys.json` from the tracked example (real `keys*.json` files are
-gitignored):
+The app reads secrets through [`react-native-keys`](https://github.com/numandev1/react-native-keys),
+which uses **per-environment** files: `keys.development.json` for debug builds and
+`keys.production.json` for release builds (there is no plain `keys.json`). Create
+them from the tracked example (real `keys*.json` files are gitignored):
 
 ```sh
-cp keys.example.json keys.json
+cp keys.example.json keys.development.json
+cp keys.example.json keys.production.json
 ```
 
-Then fill in the `secure` values. See [Configuration](./configuration) for
-details on keys, environment variables, Sentry, and feature flags.
+`yarn setup:oss` (and `yarn setup:artsy`) create these for you. Then fill in the
+`secure` values. See [Configuration](./configuration) for details on keys,
+environment variables, Sentry, and feature flags.
 
 ## Generate the native projects
 

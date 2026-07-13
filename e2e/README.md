@@ -28,7 +28,7 @@ yarn e2e:doctor          # agent-device doctor
 2. Open a session, then interact and capture state:
 
    ```sh
-   yarn agent-device open Energy --platform ios
+   yarn agent-device open rnstarter --platform ios
    yarn agent-device snapshot -i        # lists interactive elements (@e1, @e2, …)
    yarn agent-device fill @e1 "user@example.com"
    yarn agent-device click @e3
