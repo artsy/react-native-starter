@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-# Resolve the sibling scripts by this file's own location and run them from the
-# project root, so `yarn setup:artsy` works from the repo root (where yarn runs
-# it) and not only from inside scripts/.
+# Resolve sibling scripts by this file's own location and run from the project
+# root, so `yarn setup:artsy` works from the repo root (where yarn runs it) and
+# not only from inside scripts/.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/.."
 
+# Download Artsy's private fonts from S3 (needs Artsy AWS access).
 "$SCRIPT_DIR/download-fonts"
-"$SCRIPT_DIR/prepare-env-vars"
+
+# Seed .env from the tracked example if you don't have one. Expo auto-loads
+# .env and inlines EXPO_PUBLIC_* at build time; fill in real values by hand.
+# (Secrets live in keys.*.json via react-native-keys, not here.)
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
