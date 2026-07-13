@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# download-keys — fetch the react-native-keys secret files from Artsy's private
+# S3 bucket. Needs Artsy AWS access. Run from the project root (setup:artsy
+# cd's there first) so the files land at the repo root where the build reads
+# them.
+#
+# react-native-keys reads keys.development.json (debug) and keys.production.json
+# (release). If a file can't be downloaded (no S3 access), fall back to the
+# tracked keys.example.json so setup doesn't hard-fail — with a clear warning.
+set -euo pipefail
+
+S3_PREFIX="s3://artsy-citadel/rnstarter"
+
+for env in development production; do
+  target="keys.${env}.json"
+  echo "Downloading $target from $S3_PREFIX ..."
+  if aws s3 cp "$S3_PREFIX/$target" "./$target"; then
+    echo "  • downloaded $target"
+  else
+    echo "  ⚠️  could not download $target from S3 (check your Artsy AWS access)"
+    if [ -f "$target" ]; then
+      echo "     keeping existing local $target"
+    else
+      cp keys.example.json "$target"
+      echo "     seeded $target from keys.example.json — fill in real values by hand"
+    fi
+  fi
+done

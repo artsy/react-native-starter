@@ -10,6 +10,9 @@ cd "$SCRIPT_DIR/.."
 # Download Artsy's private fonts from S3 (needs Artsy AWS access).
 "$SCRIPT_DIR/download-fonts"
 
+# Download the react-native-keys secret files from S3.
+"$SCRIPT_DIR/download-keys"
+
 # Seed .env from the tracked example if you don't have one. Expo auto-loads
 # .env and inlines EXPO_PUBLIC_* at build time; fill in real values by hand.
 # (Secrets live in keys.*.json via react-native-keys, not here.)
