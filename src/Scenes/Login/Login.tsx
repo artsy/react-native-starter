@@ -12,13 +12,9 @@ import { FormikProvider, useFormik, useFormikContext } from "formik"
 import { useRef } from "react"
 import {
   Alert,
-  Image,
-  Linking,
-  Platform,
   ScrollView,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native"
-import LinearGradient from "react-native-linear-gradient"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
 
@@ -67,35 +63,9 @@ export const LoginScreenContent: React.FC = () => {
   const passwordInputRef = useRef<Input>(null)
   const emailInputRef = useRef<Input>(null)
 
-  // TODO: Test this on Android
-  const handleOpenArtsyMobile = async () => {
-    const storeURL = Platform.OS === "android" ? PLAY_STORE_URL : APP_STORE_URL
-    const appSchemeURL =
-      Platform.OS === "android" ? PLAY_STORE_SCHEME_URL : APP_SCHEME_URL
-
-    try {
-      const supported = await Linking.canOpenURL(appSchemeURL)
-
-      if (supported) {
-        Linking.openURL(appSchemeURL)
-      } else {
-        Linking.openURL(storeURL)
-      }
-    } catch (error) {
-      logger.error(
-        "couldn't open artsy mobile app",
-        error instanceof Error ? error : undefined
-      )
-    }
-  }
 
   return (
-    <LinearGradient
-      colors={["#8D8D8D", "#999999", "#A9A9A9", "#B9B9B9", "#838383", "#6A6A6A"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ flex: 1, flexGrow: 1 }}
-    >
+    <Flex backgroundColor="mono0">
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top,
@@ -104,15 +74,12 @@ export const LoginScreenContent: React.FC = () => {
         keyboardShouldPersistTaps="always"
         bounces={false}
       >
-        <Text variant="xl" color="white100" weight="medium">
-          Folio
-        </Text>
         <Spacer y={6} />
         <Text variant="lg-display" color="white100">
           Log In
         </Text>
         <Text variant="sm" color="white100">
-          With Your Artsy Partner Account
+          With Your Artsy Account
         </Text>
         <Spacer y={4} />
         <Box>
@@ -142,7 +109,9 @@ export const LoginScreenContent: React.FC = () => {
             textContentType="username"
             error={errors.email}
           />
+
           <Spacer y={2} />
+
           <Input
             autoCapitalize="none"
             autoComplete="password"
@@ -173,23 +142,6 @@ export const LoginScreenContent: React.FC = () => {
           />
         </Box>
 
-        <Spacer y={1} />
-
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert("Oups, not yet implemented")
-          }}
-        >
-          <Text
-            variant="sm"
-            color="white100"
-            style={{ textDecorationLine: "underline" }}
-            textAlign="right"
-          >
-            Forgot password?
-          </Text>
-        </TouchableOpacity>
-
         <Spacer y={4} />
 
         <Button
@@ -204,29 +156,8 @@ export const LoginScreenContent: React.FC = () => {
         >
           Log in
         </Button>
-
-        <Spacer y={2} />
-
-        <Text variant="xs" color="white100" textAlign="center">
-          Once you log in. Artsy Folio will begin downloading your artworks. We
-          recommend using a stable Wifi connection.
-        </Text>
       </ScrollView>
-      <Flex px={2} pb={4}>
-        <TouchableOpacity onPress={handleOpenArtsyMobile}>
-          <Flex flexDirection="row">
-            <Image
-              resizeMode="contain"
-              style={{ height: 50, width: 50 }}
-              source={require("assets/images/short-white-logo.png")}
-            />
-            <Text color="white100" ml={1} textAlign="left">
-              Looking for Artsy Mobile?{"\n"}Tap here to open
-            </Text>
-          </Flex>
-        </TouchableOpacity>
-      </Flex>
-    </LinearGradient>
+    </Flex>
   )
 }
 

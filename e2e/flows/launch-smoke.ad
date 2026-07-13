@@ -25,5 +25,5 @@
 # screen, which is all the smoke check needs.
 open rnstarter --relaunch
 wait "Log In"
-is visible text="Folio"
+is visible text="With Your Artsy Account"
 close
