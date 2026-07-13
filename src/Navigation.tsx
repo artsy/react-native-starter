@@ -1,4 +1,4 @@
-import { Flex } from "@artsy/palette-mobile"
+import { GridIcon, HomeIcon, SettingsIcon } from "@artsy/icons/native"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import {
   createStaticNavigation,
@@ -19,12 +19,9 @@ const useIsLoggedIn = () =>
   !!GlobalStore.useAppState((store) => store.auth.userAccessToken)
 const useIsLoggedOut = () => !useIsLoggedIn()
 
-// Simple dot indicator so the tabs render without pulling in an icon set.
-// Swap for real icons (e.g. @artsy/icons) when building out the app.
-const TabDot = ({ color }: { color: string }) => (
-  <Flex width={6} height={6} borderRadius={3} backgroundColor={color} />
-)
-
+// Tab icons come from @artsy/icons (native entrypoint). Each icon takes a
+// `fill` prop that accepts a palette color token or a raw color, so the
+// `color` React Navigation passes for the active/inactive state works directly.
 const HomeTabs = createBottomTabNavigator({
   screenOptions: { headerShown: false },
   screens: {
@@ -32,21 +29,21 @@ const HomeTabs = createBottomTabNavigator({
       screen: HomeScreen,
       options: {
         title: "Home",
-        tabBarIcon: ({ color }) => <TabDot color={color} />,
+        tabBarIcon: ({ color }) => <HomeIcon fill={color} />,
       },
     },
     List: {
       screen: ExampleListScreen,
       options: {
         title: "List",
-        tabBarIcon: ({ color }) => <TabDot color={color} />,
+        tabBarIcon: ({ color }) => <GridIcon fill={color} />,
       },
     },
     Settings: {
       screen: SettingsScreen,
       options: {
         title: "Settings",
-        tabBarIcon: ({ color }) => <TabDot color={color} />,
+        tabBarIcon: ({ color }) => <SettingsIcon fill={color} />,
       },
     },
   },
