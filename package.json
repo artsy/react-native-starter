@@ -23,6 +23,7 @@
     "e2e:record": "agent-device replay --update",
     "e2e:impact": "sniffler impact --base origin/main --head HEAD",
     "setup:artsy": "./scripts/setup-env-for-artsy",
+    "setup:oss": "./scripts/setup-oss",
     "prettier-project": "yarn prettier --write 'src/**/*.{ts,tsx}'",
     "prettier-write": "prettier --write --ignore-unknown",
     "sync-schema": "curl https://raw.githubusercontent.com/artsy/metaphysics/main/_schemaV2.graphql -o data/schema.graphql; yarn prettier --write --parser graphql data/schema.graphql",

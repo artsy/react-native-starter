@@ -15,9 +15,10 @@ This repo is a **GitHub template**, so you can spin up your own app from it:
 1. **Get a copy** — click **“Use this template” → Create a new repository** (clean
    history). Or without GitHub: `npx degit artsy/react-native-starter my-app`, or
    fork/clone.
-2. **Install & add keys** — `yarn install`, then `cp keys.example.json keys.json`
-   and fill in your own values (real `keys*.json` are gitignored). Artsy engineers
-   run `yarn setup:artsy` for fonts + env; outside Artsy, supply your own fonts/env.
+2. **Set up & install** — outside Artsy run `yarn setup:oss` (placeholder fonts +
+   `keys.json`, no private access needed), then `yarn install`. Artsy engineers run
+   `yarn setup:artsy` instead. Fill in your own `keys.json` values (real `keys*.json`
+   are gitignored).
 3. **Rebrand** — edit `app.json` (`name`, `slug`, iOS `bundleIdentifier`, Android
    `package`, icons/splash). Don't hand-edit the generated `ios/`/`android/` folders.
 4. **Point at your backend** — swap `data/schema.graphql` for your GraphQL API
@@ -51,7 +52,27 @@ yarn ios        # or: yarn android
 ```
 
 **For OSS Contributors**
-Instructions coming later
+
+```sh
+# 1. Install the pinned toolchain (node, ruby, java, yarn)
+mise install # or `asdf install`
+
+# 2. Set up placeholder fonts + keys.json (no Artsy/S3 access needed), then install
+yarn setup:oss
+yarn install
+
+# 3. Generate the native projects
+yarn prebuild
+
+# 4. Run the app
+yarn ios        # or: yarn android
+```
+
+`yarn setup:oss` writes **empty placeholder** `Unica77LL` fonts into
+`assets/fonts` (the real fonts are Artsy-private — text falls back to the system
+font; drop your own `.otf` files there to change it) and creates `keys.json`
+from `keys.example.json`. So you **don't** need to source `assets/fonts/Unica77LL-*.otf`
+yourself.
 
 ## Features
 

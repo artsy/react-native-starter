@@ -22,8 +22,10 @@ This repo is a **GitHub template**. To kickstart your own app:
 4. Then follow **Install → Configure keys → Generate the native projects → Run**
    below.
 
-> Outside Artsy, skip `yarn setup:artsy` (it fetches Artsy-private fonts + env) and
-> provide your own fonts in `assets/fonts` and env/keys instead.
+> Outside Artsy, use `yarn setup:oss` (not `yarn setup:artsy`) — it needs no
+> private access and writes placeholder fonts + `keys.json` so you don't have to
+> source Artsy's private fonts. Drop your own `.otf` files in `assets/fonts` to
+> use your own typefaces.
 
 ## Prerequisites
 
@@ -48,16 +50,32 @@ You'll also need the native build toolchains — Xcode for iOS and Android Studi
 
 ## Install
 
-**For Artsy engineers**, `yarn setup:artsy` downloads fonts and environment
-variables:
+**For Artsy engineers**, `yarn setup:artsy` downloads the real fonts and
+environment variables from S3 (needs Artsy AWS access):
 
 ```sh
 yarn setup:artsy   # fonts + env vars (Artsy engineers only)
 yarn install
 ```
 
+**For open-source contributors**, run `yarn setup:oss` instead — it needs no
+private resources:
+
+```sh
+yarn setup:oss     # placeholder fonts + keys.json from the example
+yarn install
+```
+
+`yarn setup:oss` writes **empty placeholder** `Unica77LL` fonts into
+`assets/fonts` so `expo prebuild` resolves them (the real fonts are
+Artsy-private, so text falls back to the system font — drop your own `.otf`
+files in `assets/fonts` to change that) and creates `keys.json` from
+`keys.example.json` if you don't have one. So you **don't** need to obtain
+`assets/fonts/Unica77LL-*.otf` yourself.
+
 Fonts are bundled through the `expo-font` config plugin from `assets/fonts`
-(populated by `yarn setup:artsy`) — that directory is gitignored.
+(populated by `yarn setup:artsy` or `yarn setup:oss`) — that directory is
+gitignored.
 
 ## Configure keys
 

@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# setup-oss — prepare the project for open-source contributors.
+#
+# Unlike `yarn setup:artsy` (which downloads Artsy's private Unica77LL fonts and
+# env from S3 and needs Artsy AWS access), this uses no private resources. It:
+#
+#   1. Creates placeholder Unica77LL font files in assets/fonts so `expo
+#      prebuild` / the expo-font plugin resolve them. They are empty stand-ins —
+#      the real fonts are Artsy-private, so the app falls back to system fonts.
+#      Drop real .otf files in assets/fonts to use your own typefaces.
+#   2. Creates keys.json from keys.example.json if you don't have one yet
+#      (react-native-keys reads secrets from keys.json; real keys*.json are
+#      gitignored).
+#
+# Run via: yarn setup:oss
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+# Keep this list in sync with the `expo-font` plugin's `fonts` array in app.json.
+FONT_DIR="assets/fonts"
+FONTS=(
+  "Unica77LL-Regular.otf"
+  "Unica77LL-Medium.otf"
+  "Unica77LL-Italic.otf"
+  "Unica77LL-MediumItalic.otf"
+)
+
+echo "▸ Placeholder fonts in $FONT_DIR (real Unica77LL fonts are Artsy-private)"
+mkdir -p "$FONT_DIR"
+for f in "${FONTS[@]}"; do
+  if [ -s "$FONT_DIR/$f" ]; then
+    echo "  • keeping existing $FONT_DIR/$f"
+  else
+    : > "$FONT_DIR/$f"
+    echo "  • created placeholder $FONT_DIR/$f"
+  fi
+done
+
+echo "▸ keys.json (react-native-keys)"
+if [ -f keys.json ]; then
+  echo "  • keys.json already exists — leaving it as-is"
+else
+  cp keys.example.json keys.json
+  echo "  • created keys.json from keys.example.json — fill in your own values"
+fi
+
+cat <<'EOF'
+
+✅ OSS setup complete. Next:
+
+   yarn install
+   yarn prebuild            # generate ios/ and android/
+   yarn ios                 # or: yarn android
+
+Notes:
+ • Fonts are empty placeholders, so text renders in the system font. Replace the
+   files in assets/fonts with your own .otf files to change that.
+ • keys.json holds secrets and is gitignored — fill in real values as needed.
+EOF
