@@ -12422,7 +12422,7 @@ __metadata:
 
 "react-native-keys@patch:react-native-keys@npm%3A0.7.13#~/.yarn/patches/react-native-keys-npm-0.7.13-00e9deb63c.patch":
   version: 0.7.13
-  resolution: "react-native-keys@patch:react-native-keys@npm%3A0.7.13#~/.yarn/patches/react-native-keys-npm-0.7.13-00e9deb63c.patch::version=0.7.13&hash=b1d755"
+  resolution: "react-native-keys@patch:react-native-keys@npm%3A0.7.13#~/.yarn/patches/react-native-keys-npm-0.7.13-00e9deb63c.patch::version=0.7.13&hash=f29818"
   dependencies:
     crypto-js: "npm:^4.2.0"
     fs-extra: "npm:^11.1.1"
@@ -12432,7 +12432,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/29461ef9d72403350655f84e796f4a6b52a8d0d7c3443fd91d428a1d7fb6e0c723c43350f3bd3e44acd314cff92b18b4b47bb2e1153ed690d6b67a2e7aacffec
+  checksum: 10c0/8c0c47710e5382d3f10388a70e3cfbabd32bb43eb5a494ada59c92dc6ee2fbfa4a63c0e0e2422d65f7de83905cb4057bf16cb0ec27672832a1395931f151555a
   languageName: node
   linkType: hard
 
