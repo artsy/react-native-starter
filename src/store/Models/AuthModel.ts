@@ -4,6 +4,7 @@ import Keys from "react-native-keys"
 
 import { getUserAgent } from "helpers/getUserAgent"
 import { GlobalStoreModel } from "store/Models/GlobalStoreModel"
+import { logger } from "system/logger"
 
 interface AuthModelState {
   userAccessToken: string | null
@@ -43,7 +44,9 @@ export interface AuthModel extends AuthModelState {
 export const AuthModel: AuthModel = {
   ...authModelInitialState,
 
-  setState: action((state, payload) => Object.assign(state, payload)),
+  setState: action((state, payload) => {
+    Object.assign(state, payload)
+  }),
 
   setUserID: thunk(async (actions, _payload, context) => {
     try {
@@ -62,7 +65,8 @@ export const AuthModel: AuthModel = {
         userID: user.id,
       })
     } catch (error) {
-      fail(error)
+      logger.error("Failed to fetch the user ID", error as Error)
+      throw error
     }
   }),
 
@@ -95,7 +99,8 @@ export const AuthModel: AuthModel = {
         return resJson.xapp_token
       }
     } catch (error) {
-      fail(error)
+      logger.error("Failed to fetch the xApp token", error as Error)
+      throw error
     }
   }),
 
@@ -116,7 +121,8 @@ export const AuthModel: AuthModel = {
       })
       return res
     } catch (error) {
-      fail(error)
+      logger.error("Gravity unauthenticated request failed", error as Error)
+      throw error
     }
   }),
 
@@ -142,11 +148,13 @@ export const AuthModel: AuthModel = {
       // // The user has successfully logged in
       if (result.status === 201) {
         const { expires_in, access_token } = resJson
-        await actions.setUserID()
+        // Persist the access token first — setUserID reads it from state to
+        // authenticate the /api/v1/me request.
         actions.setState({
           userAccessToken: access_token,
           userAccessTokenExpiresIn: expires_in,
         })
+        await actions.setUserID()
         return {
           success: true,
           message: null,
