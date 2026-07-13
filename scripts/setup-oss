@@ -51,6 +51,14 @@ for env in development production; do
   fi
 done
 
+echo "▸ .env (Expo public config)"
+if [ -f .env ]; then
+  echo "  • keeping existing .env"
+else
+  cp .env.example .env
+  echo "  • created .env from .env.example — fill in EXPO_PUBLIC_* values (optional)"
+fi
+
 cat <<'EOF'
 
 ✅ OSS setup complete. Next:
