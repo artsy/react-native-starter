@@ -12,8 +12,7 @@ import { FormikProvider, useFormik, useFormikContext } from "formik"
 import { useRef } from "react"
 import {
   Alert,
-  ScrollView,
-  TouchableOpacity
+  ScrollView
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import * as Yup from "yup"
@@ -34,14 +33,6 @@ export const loginSchema = Yup.object().shape({
     (value) => value !== ""
   ),
 })
-
-
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=net.artsy.app"
-const PLAY_STORE_SCHEME_URL = "artsy://"
-const APP_STORE_URL =
-  "https://apps.apple.com/us/app/artsy-buy-sell-original-art/id703796080"
-const APP_SCHEME_URL = "artsy:///"
 
 export const LoginScreenContent: React.FC = () => {
   const color = useColor()

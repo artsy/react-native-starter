@@ -28,6 +28,7 @@
     },
     "plugins": [
       "react-native-keys",
+      "./plugins/withReactNativeKeysAndroid.js",
       [
         "expo-splash-screen",
         {
