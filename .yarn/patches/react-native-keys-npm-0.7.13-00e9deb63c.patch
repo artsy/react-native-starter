@@ -70,3 +70,14 @@ index 6e403223a08c3ff5149fe38ca143e1b3e056582c..da7f0f81683b2f969741be39885a1e07
  
    defaultConfig {
      minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+diff --git a/src/index.ts b/src/index.ts
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -8,6 +8,6 @@
+   '- You are not using Expo Go\n';
+ 
+ // @ts-expect-error
+-const isTurboModuleEnabled = global.__turboModuleProxy != null;
++const isTurboModuleEnabled = global.__turboModuleProxy != null || global.RN$Bridgeless === true;
+ 
+ // Keep this to sync auto install with the native code
