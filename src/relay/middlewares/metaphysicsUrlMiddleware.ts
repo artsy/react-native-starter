@@ -12,7 +12,10 @@ export const metaphysicsUrlMiddleware = () => {
       return {
         "Content-Type": "application/json",
         "User-Agent": userAgent,
-        "X-USER-ID": userID as string,
+        // Only send X-USER-ID once we actually have a userID. Right after
+        // sign-in it can still be null (setUserID populates it async), and a
+        // null header value is rejected by Expo's native fetch.
+        ...(userID ? { "X-USER-ID": userID } : {}),
         "X-TIMEZONE": "Europe/Berlin",
       }
     },

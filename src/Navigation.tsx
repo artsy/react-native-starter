@@ -50,7 +50,9 @@ const HomeTabs = createBottomTabNavigator({
 })
 
 const RootStack = createNativeStackNavigator({
-  screenOptions: { headerShown: false },
+  screenOptions: { headerShown: false, contentStyle: {
+    backgroundColor: "#fff"
+  } },
   groups: {
     SignedIn: {
       if: useIsLoggedIn,
