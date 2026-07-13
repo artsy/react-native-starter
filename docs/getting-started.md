@@ -89,9 +89,15 @@ cp keys.example.json keys.development.json
 cp keys.example.json keys.production.json
 ```
 
-`yarn setup:oss` (and `yarn setup:artsy`) create these for you. Then fill in the
-`secure` values. See [Configuration](./configuration) for details on keys,
-environment variables, Sentry, and feature flags.
+- **OSS contributors:** `yarn setup:oss` creates both files from the example;
+  fill in the `secure` values yourself.
+- **Artsy engineers:** `yarn setup:artsy` **downloads the real key files** from
+  the private S3 bucket (`s3://artsy-citadel/rnstarter/keys.<env>.json`), so you
+  don't fill them in by hand. If S3 is unreachable it falls back to the example
+  and warns.
+
+See [Configuration](./configuration) for details on keys, environment variables,
+Sentry, and feature flags.
 
 ## Generate the native projects
 
