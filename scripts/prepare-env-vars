@@ -9,14 +9,24 @@ set -e
 echo "Downloading .env.shared file..."
 if ! aws s3 cp s3://artsy-citadel/dev/.env.energy .env.shared; then
   echo "Unable to download shared config from s3"
-  echo "This is expected for open source contributors. We will work on adding support for OSS soon"
+  echo "This is expected for open source contributors (use 'yarn setup:oss')."
   echo "If you work at Artsy, please check your s3 access."
-  cp .env.oss .env.shared
+  if [[ -e ".env.oss" ]]; then
+    cp .env.oss .env.shared
+  else
+    echo "No .env.oss fallback present; starting with an empty .env.shared"
+    : > .env.shared
+  fi
 fi
 
 if [[ ! -e ".env" ]]; then
-  echo "Initializing .env from .env.example (for custom configuration)..."
-  cat .env.example > .env
+  if [[ -e ".env.example" ]]; then
+    echo "Initializing .env from .env.example (for custom configuration)..."
+    cat .env.example > .env
+  else
+    echo "No .env.example present; starting with an empty .env"
+    : > .env
+  fi
 fi
 
 if [[ -e ".env.dev" ]]; then

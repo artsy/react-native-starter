@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# Resolve the sibling scripts by this file's own location and run them from the
+# project root, so `yarn setup:artsy` works from the repo root (where yarn runs
+# it) and not only from inside scripts/.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/.."
 
-./download-fonts
-./prepare-env-vars
+"$SCRIPT_DIR/download-fonts"
+"$SCRIPT_DIR/prepare-env-vars"
